@@ -13,30 +13,36 @@ $white: #ffffff;
 * {
   all: unset;
   font-family: JetBrains Mono Nerf Font, monospace;
-  font-weight: bold;
-  font-size: 14px;
 }
 
 window {
   background: $background;
 }
 
-.bar { margin-bottom: 1px;}
+.bar { 
+  margin-bottom: 1px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
 
 .icon-module {
   padding: 4px 8px 4px 2px;
   & > &__icon {
     margin-right: 10px;
+  font-weight: bold;
+  font-size: 14px;
   }
 }
 
 
 .workspaces {
-  font-size: 12px;
-  margin: 0 20px;
+  margin: -6px 20px;
+    font-size: 28px;
+    font-weight: 900;
 
   button {
-    margin: 0px 6px;
+    padding: 0 6px;
   }
 
 }
