@@ -1,11 +1,12 @@
 (include "./modules/workspaces/workspaces.yuck")
+(include "./modules/updates/updates.yuck")
 
 
 ; Windows foldstart
 (defwindow bar
   ; :stacking "fg"
   :exclusive true
-  :focusable false
+  ; :focusable false
   :wm-ignore true
   :monitor 0
   :hexpand false
@@ -21,7 +22,7 @@
   (box :orientation "h" :space-evenly false :class "bar" 
     (box :halign "start" :space-evenly false
       (workspaces)
-      (player)
+      ; (player)
     )
     (box :halign "end" :spacing 15 :hexpand true :space-evenly false 
       (notifications)
@@ -49,7 +50,6 @@
 (defpoll date_poll :interval "1m" "date +%d/%m/%Y")
 (defpoll trash_poll :interval "10s" "./modules/trash.sh")
 (defpoll noisetorch_poll :initial "" :interval "10s" "./modules/noisetorch.sh")
-(defpoll updates_poll :initial "" :interval "1m" "./modules/updates.sh &") 
 (defpoll github_poll :initial "" :interval "1m" "./modules/github.sh")
 (defpoll ping_poll :interval "10s" "./modules/ping.sh")
 
@@ -122,9 +122,6 @@
   (icon-module :class "noisetorch" :icon "" 
     (label :text noisetorch_poll))) 
 
-(defwidget updates []
-  (icon-module :class "updates" :icon "" :visible {updates_poll != ""}
-    (label :text updates_poll))) 
 
 (defwidget ping []
   (icon-module :class "ping" :icon ""

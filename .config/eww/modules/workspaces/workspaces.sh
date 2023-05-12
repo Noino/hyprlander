@@ -4,7 +4,7 @@ colors=("#f38ba8" "#a6e3a1" "#89b4fa" "#fab387")
 dimmed=("#794554" "#537150" "#445a7d" "#7d5943")
 empty="#302d41"
 
-focusedws=1
+focusedws=0
 
 declare -A o=([1]=0 [2]=0 [3]=0 [4]=0 [5]=0 [6]=0 [7]=0 [8]=0 [9]=0 [10]=0)
 declare -A monitormap
