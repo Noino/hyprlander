@@ -1,5 +1,6 @@
 (include "./modules/workspaces/workspaces.yuck")
 (include "./modules/updates/updates.yuck")
+(include "./modules/system/resources.yuck")
 
 
 ; Windows foldstart
@@ -33,11 +34,11 @@
       (speaker)
       ;(ping)
       ;(network)
-      (disk)
-      (home_disk)
-      (cpu)
-      (ram)
-      (amd_radeon)
+      (sys.disk)
+      (sys.home_disk)
+      (sys.cpu)
+      (sys.ram)
+      (sys.gpu)
       (date)
       (time)
     )
@@ -48,19 +49,18 @@
 ; Variables foldstart
 (defpoll time_poll :interval "1s" "date +%H:%M")
 (defpoll date_poll :interval "1m" "date +%d/%m/%Y")
-(defpoll trash_poll :interval "10s" "./modules/trash.sh")
-(defpoll noisetorch_poll :initial "" :interval "10s" "./modules/noisetorch.sh")
-(defpoll github_poll :initial "" :interval "1m" "./modules/github.sh")
-(defpoll ping_poll :interval "10s" "./modules/ping.sh")
+; (defpoll trash_poll :interval "10s" "./modules/trash.sh")
+; (defpoll noisetorch_poll :initial "" :interval "10s" "./modules/noisetorch.sh")
+; (defpoll github_poll :initial "" :interval "1m" "./modules/github.sh")
+; (defpoll ping_poll :interval "10s" "./modules/ping.sh")
 
 ; (deflisten workspaces_listen "./modules/workspaces.sh")
 (deflisten player_listen :initial '{"show": "no", "content": ""}' "./modules/player.sh")
-(deflisten amd_radeon_listen "./modules/amd_radeon.sh")
 (deflisten notifications_listen :initial '{"show": "no", "content": ""}' "./modules/notifications.sh")
 
 ; Make this cleaner at some point
-(defpoll microphone_poll :interval "999h" "./modules/microphone.sh")
-(defpoll speaker_poll :interval "999h" "./modules/speaker.sh")
+(defpoll microphone_poll :interval "1s" "./modules/microphone.sh")
+(defpoll speaker_poll :interval "1s" "./modules/speaker.sh")
 ; foldend
 
 ; Modules foldstart
@@ -82,10 +82,6 @@
   (icon-module :class "player" :icon "" :visible {player_listen.show == "yes"}
     (literal :content {player_listen.content})))
 
-(defwidget ram []
-  (icon-module :class "ram" :icon "" :visible {EWW_RAM.used_mem_perc != ""}
-    (label :text "${round(EWW_RAM.used_mem_perc, 0)}%")))
-
 (defwidget notifications []
   (icon-module :class "notifications" :icon "" :visible {notifications_listen.show == "yes"}
     (literal :content {notifications_listen.content}))) 
@@ -98,39 +94,24 @@
   (icon-module :class "time" :icon "" 
     (label :text time_poll))) 
 
-(defwidget amd_radeon []
-  (icon-module :class "amd_radeon" :icon "" 
-    (label :text amd_radeon_listen))) 
 
-(defwidget cpu []
-  (icon-module :class "cpu" :icon "" 
-    (label :text "${round(EWW_CPU.avg, 0)}%"))) 
+;(defwidget trash []
+;  (icon-module :class "trash" :icon "" 
+;    (label :text trash_poll))) 
+;
+;(defwidget noisetorch []
+;  (icon-module :class "noisetorch" :icon "" 
+;    (label :text noisetorch_poll))) 
+;
 
-(defwidget disk []
-  (icon-module :class "disk" :icon "" 
-    (label :text "${round(EWW_DISK["/"].used_perc, 0)}%"))) 
+;(defwidget ping []
+;  (icon-module :class "ping" :icon ""
+;    (label :text ping_poll))) 
 
-(defwidget home_disk []
-  (icon-module :class "disk" :icon "/home" 
-    (label :text "${round(EWW_DISK["/home"].used_perc, 0)}%"))) 
-
-(defwidget trash []
-  (icon-module :class "trash" :icon "" 
-    (label :text trash_poll))) 
-
-(defwidget noisetorch []
-  (icon-module :class "noisetorch" :icon "" 
-    (label :text noisetorch_poll))) 
-
-
-(defwidget ping []
-  (icon-module :class "ping" :icon ""
-    (label :text ping_poll))) 
-
-(defwidget network []
-  (icon-module :class "network" :icon ""
-    (label :text "${round(EWW_NET.enp42s0.NET_UP / 1000000, 2)}/${round(EWW_NET.enp42s0.NET_DOWN / 1000000, 2)}"))) 
-
+;(defwidget network []
+;  (icon-module :class "network" :icon ""
+;    (label :text "${round(EWW_NET.enp42s0.NET_UP / 1000000, 2)}/${round(EWW_NET.enp42s0.NET_DOWN / 1000000, 2)}"))) 
+;
 (defwidget speaker []
   (icon-module :class "speaker" 
                :icon {speaker_poll.icon}
