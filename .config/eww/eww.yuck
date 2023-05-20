@@ -1,6 +1,8 @@
 (include "./modules/workspaces/workspaces.yuck")
 (include "./modules/updates/updates.yuck")
 (include "./modules/system/resources.yuck")
+(include "./modules/sound/speaker.yuck")
+(include "./modules/sound/microphone.yuck")
 
 
 ; Windows foldstart
@@ -58,10 +60,6 @@
 (deflisten player_listen :initial '{"show": "no", "content": ""}' "./modules/player.sh")
 (deflisten notifications_listen :initial '{"show": "no", "content": ""}' "./modules/notifications.sh")
 
-; Make this cleaner at some point
-(defpoll microphone_poll :interval "1s" "./modules/microphone.sh")
-(defpoll speaker_poll :interval "1s" "./modules/speaker.sh")
-; foldend
 
 ; Modules foldstart
 ; Generic icon module foldstart
@@ -112,19 +110,5 @@
 ;  (icon-module :class "network" :icon ""
 ;    (label :text "${round(EWW_NET.enp42s0.NET_UP / 1000000, 2)}/${round(EWW_NET.enp42s0.NET_DOWN / 1000000, 2)}"))) 
 ;
-(defwidget speaker []
-  (icon-module :class "speaker" 
-               :icon {speaker_poll.icon}
-    (eventbox :onscroll `eww update speaker_poll="$(./modules/speaker.sh {})"`
-      (button :onclick `eww update speaker_poll="$(./modules/speaker.sh toogle)"`
-        (label :text {speaker_poll.content})))))
-
-(defwidget microphone []
-  (icon-module :class "microphone" 
-               :icon {microphone_poll.icon}
-    (eventbox :onscroll `eww update microphone_poll="$(./modules/microphone.sh {})"`
-      (button :onclick `eww update microphone_poll="$(./modules/microphone.sh toogle)"`
-        (label :text {microphone_poll.content})))))
-; foldend
 
 ; vim:foldmarker=foldstart,foldend
