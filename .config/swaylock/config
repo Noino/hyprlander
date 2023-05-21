@@ -6,7 +6,7 @@ clock
 datestr=%A, %d.%m.%Y
 effect-blur=5x5
 color=1f1d2e80
-font="JetBrainsMono Nerd Font"
+font="JetBrainsMono Nerd Font Mono"
 indicator
 indicator-radius=250
 indicator-thickness=4
