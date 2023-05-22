@@ -13,11 +13,11 @@ end
 -- This is where you actually apply your config choices
 
 -- For example, changing the color scheme:
-config.color_scheme = 'AdventureTime'
+config.color_scheme = 'tokyonight_moon'
 
 config.font = wezterm.font('JetBrains Mono')
 
-config.window_background_opacity = 0.5
+config.window_background_opacity = 0.76
 config.hide_tab_bar_if_only_one_tab = true
 
 enable_kitty_keyboard = true

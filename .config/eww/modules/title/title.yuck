@@ -1,0 +1,13 @@
+(deflisten screen_0 "hyprland-activewindow `hyprctl monitors -j | jq -r \".[0].name\"`")
+
+(defwidget title_0 []
+  (label 
+    :width 265
+    :truncate_left true 
+    :show_truncated true 
+    :xalign 0 
+    :limit-width 30
+    :text "${screen_0}"
+  )
+)
+   

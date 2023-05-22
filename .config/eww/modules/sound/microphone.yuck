@@ -1,8 +1,10 @@
 (defpoll microphone_poll :interval "1s" "./modules/sound/microphone.sh")
+
 (defwidget microphone []
   (eventbox :onscroll `eww update microphone_poll="$(./modules/sound/microphone.sh {})"`
-    (icon-module :class "microphone" :icon {microphone_poll.icon}
-      (button :onclick `eww update microphone_poll="$(./modules/sound/microphone.sh toogle)"`
+  :width 69
+    (button :onclick `eww update microphone_poll="$(./modules/sound/microphone.sh toogle)"`
+      (icon-module :halign "start" :class "microphone" :icon {microphone_poll.icon}
         (label :text {microphone_poll.content})
       )
     )

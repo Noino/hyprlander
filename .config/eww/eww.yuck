@@ -3,31 +3,31 @@
 (include "./modules/system/resources.yuck")
 (include "./modules/sound/speaker.yuck")
 (include "./modules/sound/microphone.yuck")
+(include "./modules/title/title.yuck")
 
 
 ; Windows foldstart
 (defwindow bar
-  ; :stacking "fg"
+  :stacking "fg"
   :exclusive true
-  ; :focusable false
-  :wm-ignore true
+  :focusable false
   :monitor 0
   :hexpand false
   :vexpand false
   :geometry (geometry :anchor "top center" :x 0 :y 0 :width "100%")
-  ; :reserve (struts :distance "15px" :side "top")
   (bar)
 )
-; foldend
+
 
 ; Bar foldstart
 (defwidget bar []
-  (box :orientation "h" :space-evenly false :class "bar" 
+  (box :orientation "h" :space-evenly false :class "bar"
     (box :halign "start" :space-evenly false
       (workspaces)
       ; (player)
     )
     (box :halign "end" :spacing 15 :hexpand true :space-evenly false 
+      (title_0)
       (notifications)
       (updates)
       ;(trash)
@@ -46,35 +46,25 @@
     )
   )
 )
-; foldend
 
-; Variables foldstart
+
+
 (defpoll time_poll :interval "1s" "date +%H:%M")
 (defpoll date_poll :interval "1m" "date +%d/%m/%Y")
-; (defpoll trash_poll :interval "10s" "./modules/trash.sh")
-; (defpoll noisetorch_poll :initial "" :interval "10s" "./modules/noisetorch.sh")
-; (defpoll github_poll :initial "" :interval "1m" "./modules/github.sh")
-; (defpoll ping_poll :interval "10s" "./modules/ping.sh")
-
-; (deflisten workspaces_listen "./modules/workspaces.sh")
 (deflisten player_listen :initial '{"show": "no", "content": ""}' "./modules/player.sh")
 (deflisten notifications_listen :initial '{"show": "no", "content": ""}' "./modules/notifications.sh")
 
-
-; Modules foldstart
-; Generic icon module foldstart
-(defwidget icon-module [icon ?class ?visible]
+; generic module
+(defwidget icon-module [icon ?class ?visible ?halign]
   (box :class "${class} icon-module"
        :orientation "h"
-       :halign "end"
+       :halign {halign ?: "end"}
        :space-evenly false
        :visible {visible ?: true} ; because the argument is optional
     (label :class "icon-module__icon" :text "${icon}")
-    (children)))
-; foldend
-
-; Polybar-Style modules foldstart
-; (defwidget workspaces []  (literal :content workspaces_listen))
+    (children)
+  )
+)
 
 (defwidget player []
   (icon-module :class "player" :icon "" :visible {player_listen.show == "yes"}
@@ -92,6 +82,13 @@
   (icon-module :class "time" :icon "" 
     (label :text time_poll))) 
 
+
+; (defpoll trash_poll :interval "10s" "./modules/trash.sh")
+; (defpoll noisetorch_poll :initial "" :interval "10s" "./modules/noisetorch.sh")
+; (defpoll github_poll :initial "" :interval "1m" "./modules/github.sh")
+; (defpoll ping_poll :interval "10s" "./modules/ping.sh")
+; (deflisten workspaces_listen "./modules/workspaces.sh")
+; (defwidget workspaces []  (literal :content workspaces_listen))
 
 ;(defwidget trash []
 ;  (icon-module :class "trash" :icon "" 
@@ -111,4 +108,4 @@
 ;    (label :text "${round(EWW_NET.enp42s0.NET_UP / 1000000, 2)}/${round(EWW_NET.enp42s0.NET_DOWN / 1000000, 2)}"))) 
 ;
 
-; vim:foldmarker=foldstart,foldend
+

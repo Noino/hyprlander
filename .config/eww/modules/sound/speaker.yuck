@@ -2,8 +2,9 @@
 
 (defwidget speaker []
   (eventbox :onscroll `eww update speaker_poll="$(./modules/sound/speaker.sh {})"`
-    (icon-module :class "speaker" :icon {speaker_poll.icon}
-      (button :onclick `eww update speaker_poll="$(./modules/sound/speaker.sh toogle)"`
+    :width 69
+    (button :onclick `eww update speaker_poll="$(./modules/sound/speaker.sh toogle)"`
+      (icon-module :halign "start" :class "speaker" :icon {speaker_poll.icon}
         (label :text {speaker_poll.content})
       )
     )
