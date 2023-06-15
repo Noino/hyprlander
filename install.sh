@@ -11,9 +11,9 @@ src_dir=`pwd`;
 cd ~/.config
 
 for d in ${src_dir}/dotconfig/*; do 
-	# backup exiting things
+	# backup conflicting things
 	[[ -e "${d##*/}" && ! -L "${d##*/}" ]] && mv "${d##*/}" "${d##*/}".bak
-	# remove existing links
+	# remove conflicting links
 	[[ -L "${d##*/}" ]] && rm "${d##*/}"
 	# make install
 	[[ -d $d ]] && ln -s "$d/" || ln -s "$d" 
