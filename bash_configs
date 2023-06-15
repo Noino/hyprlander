@@ -1,0 +1,80 @@
+
+# aliases
+alias ls='ls --color=auto'
+alias ll='ls -la'
+
+alias vi='nvim'
+alias vim='nvim'
+
+export EDITOR=nvim
+
+# Command history longer and better formatting
+HISTSIZE=5000
+HISTFILESIZE=10000
+HISTTIMEFORMAT="%d.%m.%y %T "
+
+# Avoid duplicates in history
+export HISTCONTROL=ignoredups:erasedups
+
+# Expand the bang command before running it
+shopt -s histverify
+
+# Fix bash history in tmux sessions by appending to history file
+shopt -s histappend
+
+# Ensures common history for all sessions
+export PROMPT_COMMAND='history -a'
+
+# Changes the terminal colors a bit
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
+if [ "$UID" = 0 ]; then
+    BP_USR="\[\e[1;31m\]\u\[\e[1;36m\]";
+else
+    BP_USR="\[\e[36m\]\u\[\e[m\]";
+fi
+
+BP_JOBS="\[\e[1;31m\]\j\[\e[m\]";
+BP_TIME="\[\e[35m\]\t\[\e[m\]"
+BP_HOST="\[\e[32m\]\h\[\e[m\]"
+BP_PATH="\[\e[33;1m\]\w\[\e[m\]"
+BP_BRANCH="\[\e[33m\]\$(parse_git_branch)\[\e[m\]"
+
+export PS1="[${BP_TIME}][${BP_JOBS}] ${BP_USR}@${BP_HOST}:${BP_PATH}${BP_BRANCH}$ "
+
+# Extract any archive by just writing "extract"
+extract () {
+   if [ -f $1 ] ; then
+       case $1 in
+           *.tar.bz2)   tar xvjf $1    ;;
+           *.tar.gz)    tar xvzf $1    ;;
+           *.bz2)       bunzip2 $1     ;;
+           *.rar)       unrar x $1       ;;
+           *.gz)        gunzip $1      ;;
+           *.tar)       tar xvf $1     ;;
+           *.tbz2)      tar xvjf $1    ;;
+           *.tgz)       tar xvzf $1    ;;
+           *.zip)       unzip $1       ;;
+           *.Z)         uncompress $1  ;;
+           *.7z)        7z x $1        ;;
+           *)           echo "don't know how to extract '$1'..." ;;
+       esac
+   else
+       echo "'$1' is not a valid file!"
+   fi
+ }
+
+# Aliases for going up the directory
+
+repeat() { printf "$1"'%.s' $(eval "echo {1.."$(($2))"}");  }
+
+for i in {1..20}; do
+    a=$(repeat '.' $i)
+    d=$(repeat '../' $i)
+
+    alias .$a="cd ${d}"
+    alias .$i="cd ${d}"
+done
+

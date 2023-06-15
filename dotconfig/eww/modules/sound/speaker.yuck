@@ -1,0 +1,12 @@
+(defpoll speaker_poll :interval "1s" "./modules/sound/speaker.sh")
+
+(defwidget speaker []
+  (eventbox :onscroll `eww update speaker_poll="$(./modules/sound/speaker.sh {})"`
+    :width 69
+    (button :onclick `eww update speaker_poll="$(./modules/sound/speaker.sh toogle)"`
+      (icon-module :halign "start" :class "speaker" :icon {speaker_poll.icon}
+        (label :text {speaker_poll.content})
+      )
+    )
+  )
+)

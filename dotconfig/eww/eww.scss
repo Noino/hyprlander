@@ -1,0 +1,49 @@
+$grey: #aaaaaa;
+$foreground-alt: #505559;
+$background: rgba(26,27,38,.5);
+$black: #000000;
+$red: #ff6565;
+$green: #b8cc52;
+$yellow: #e6c446;
+$blue: #68d4ff;
+$magenta: #ffa3aa;
+$cyan: #36a3d9;
+$white: #ffffff;
+
+* {
+  all: unset;
+  font-family: "JetBrainsMono Nerd Font Mono", monospace;
+}
+
+window {
+  background: $background;
+}
+
+.bar { 
+  margin-bottom: 1px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+
+.icon-module {
+  padding: 4px 8px 4px 2px;
+  & > &__icon {
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+}
+
+
+.workspaces {
+  margin: -6px 20px;
+    font-size: 28px;
+    font-weight: 900;
+
+  button {
+    padding: 0 6px;
+  }
+
+}
+
