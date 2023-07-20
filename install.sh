@@ -8,6 +8,7 @@ src_dir=`pwd`;
 [[ `rg "${src_dir##*/}" ~/.bash_profile` ]] || echo "[[ -f \"${src_dir}\"/bash_configs ]] && . \"${src_dir}\"/bash_configs" >> ~/.bash_profile
 
 # makes linking ez
+[[ -d ~/.config ]] || mkdir ~/.config
 cd ~/.config
 
 for d in ${src_dir}/dotconfig/*; do 
