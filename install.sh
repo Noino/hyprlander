@@ -11,16 +11,17 @@ src_dir=`pwd`;
 [[ -d ~/.config ]] || mkdir ~/.config
 cd ~/.config
 
-for d in ${src_dir}/dotconfig/*; do 
-	# backup conflicting things
-	[[ -e "${d##*/}" && ! -L "${d##*/}" ]] && mv "${d##*/}" "${d##*/}".bak
-	# remove conflicting links
-	[[ -L "${d##*/}" ]] && rm "${d##*/}"
-	# make install
-	[[ -d $d ]] && ln -s "$d/" || ln -s "$d" 
+for d in ${src_dir}/dotconfig/*; do
+    # backup conflicting things
+    [[ -e "${d##*/}" && ! -L "${d##*/}" ]] && mv "${d##*/}" "${d##*/}".bak
+    # remove conflicting links
+    [[ -L "${d##*/}" ]] && rm "${d##*/}"
+    # make install
+    [[ -d $d ]] && ln -s "$d/" || ln -s "$d"
 done
 
-
+[[ -e  ~/.local/share/nvim/site/pack/packer/start/packer.nvim ]] || git clone --depth 1 https://github.com/wbthomason/packer.nvim ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+nvim \"${src_dir}\"/dotconfig/nvim/lua/theprimeagen/packer.lua -c :so -c :PackerSync
 
 
 
