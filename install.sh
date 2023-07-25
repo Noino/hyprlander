@@ -21,7 +21,7 @@ for d in ${src_dir}/dotconfig/*; do
 done
 
 [[ -e  ~/.local/share/nvim/site/pack/packer/start/packer.nvim ]] || git clone --depth 1 https://github.com/wbthomason/packer.nvim ~/.local/share/nvim/site/pack/packer/start/packer.nvim
-nvim \"${src_dir}\"/dotconfig/nvim/lua/theprimeagen/packer.lua -c :so -c :PackerSync
+nvim \"${src_dir}\"/dotconfig/nvim/lua/theprimeagen/packer.lua --noplugin -c ":so | :PackerSync"
 
 
 
