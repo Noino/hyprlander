@@ -1,3 +1,4 @@
 [submodule "dotconfig/nvim"]
-	path = dotconfig/nvim
-	url = https://github.com/Noino/nvim
+    path = dotconfig/nvim
+    url = https://github.com/Noino/nvim
+    branch = .
