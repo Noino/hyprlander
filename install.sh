@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+/usr/bin/which go >/dev/null || { echo "Gotta install golang first" && exit 1; }
+/usr/bin/which rg >/dev/null || { echo "Gotta install ripgrep first" && exit 2; }
+/usr/bin/which npm >/dev/null || { echo "Gotta install npm *vomit*" && exit 3; }
+
 # get our working directory straight
 cd $(dirname $0)
 src_dir=`pwd`;
