@@ -1,4 +1,4 @@
 [submodule "dotconfig/nvim"]
     path = dotconfig/nvim
-    url = https://github.com/Noino/nvim
+    url = git@github.com:Noino/nvim
     update = rebase
