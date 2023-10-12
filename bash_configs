@@ -22,6 +22,9 @@ shopt -s histverify
 # Fix bash history in tmux sessions by appending to history file
 shopt -s histappend
 
+# Make tab completion case insensitive
+bind -s 'set completion-ignore-case on'
+
 # Ensures common history for all sessions
 export PROMPT_COMMAND='history -a'
 
