@@ -1,5 +1,5 @@
 
-(defpoll updates_poll :initial "" :interval "1m" "./modules/updates/updates.sh &") 
+(defpoll updates_poll :initial "" :interval "1m" "./modules/updates/updates.sh")
 
 (defwidget updates []
   (eventbox

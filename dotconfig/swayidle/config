@@ -1,0 +1,5 @@
+timeout 300 'swaylock -f --grace 10'
+timeout 302 'playerctl -a pause'
+timeout 600 'systemctl suspend'
+before-sleep 'swaylock -f'
+

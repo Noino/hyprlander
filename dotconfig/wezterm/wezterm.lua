@@ -1,6 +1,7 @@
 -- Pull in the wezterm API
 local wezterm = require 'wezterm'
 
+local act = wezterm.action
 -- This table will hold the configuration.
 local config = {}
 
@@ -21,6 +22,24 @@ config.window_background_opacity = 0.85
 config.hide_tab_bar_if_only_one_tab = true
 
 enable_kitty_keyboard = true
+config.enable_wayland = false
+
+
+config.mouse_bindings = {
+	{
+		event = { Down = { streak = 1, button = "Right" } },
+		mods = "NONE",
+		action = wezterm.action_callback(function(window, pane)
+			local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+		 	if has_selection then
+		 		window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
+		 		window:perform_action(act.ClearSelection, pane)
+		 	else
+		 		window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
+		 	end
+		 end),
+	},
+}
 
 -- and finally, return the configuration to wezterm
 return config

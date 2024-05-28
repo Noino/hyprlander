@@ -1,25 +1,29 @@
 
-(deflisten gpu_listen "./modules/radeon.sh")
+(defpoll gpu_poll :initial "" :interval "1s" "./modules/system/gpu.sh")
 
 
 
 (defwidget sys.gpu []
-  (icon-module :class "gpu" :icon "" 
-    (label :text gpu_listen))) 
+;  (icon-module :class "gpu" :icon ""
+  (icon-module :class "gpu" :icon "GPU"
+    (label :text gpu_poll)))
 
 (defwidget sys.cpu []
-  (icon-module :class "cpu" :icon "" 
-    (label :text "${round(EWW_CPU.avg, 0)}%"))) 
+;  (icon-module :class "cpu" :icon ""
+  (icon-module :class "cpu" :icon "CPU"
+    (label :text "${round(EWW_CPU.avg, 0)}%")))
 
 (defwidget sys.disk []
-  (icon-module :class "disk" :icon "" 
-    (label :text "${round(EWW_DISK["/"].used_perc, 0)}%"))) 
+;  (icon-module :class "disk" :icon ""
+  (icon-module :class "disk" :icon "/"
+    (label :text "${round(EWW_DISK["/"].used_perc, 0)}%")))
 
 (defwidget sys.home_disk []
-  (icon-module :class "disk" :icon "/home" 
-    (label :text "${round(EWW_DISK["/home"].used_perc, 0)}%"))) 
+  (icon-module :class "disk" :icon "/home"
+    (label :text "${round(EWW_DISK["/home"].used_perc, 0)}%")))
 
 (defwidget sys.ram []
-  (icon-module :class "ram" :icon "" :visible {EWW_RAM.used_mem_perc != ""}
+;  (icon-module :class "ram" :icon "" :visible {EWW_RAM.used_mem_perc != ""}
+  (icon-module :class "ram" :icon "RAM" :visible {EWW_RAM.used_mem_perc != ""}
     (label :text "${round(EWW_RAM.used_mem_perc, 0)}%")))
 
