@@ -33,6 +33,7 @@
   (box :orientation "h" :space-evenly false :class "bar"
     (box :halign "start" :space-evenly false
       (workspaces)
+      (systray :icon-size 18 :spacing 3)
       ; (player)
     )
     (box :halign "end" :spacing 15 :hexpand true :space-evenly false
@@ -50,7 +51,7 @@
       (sys.cpu)
       (sys.gpu)
       (sys.ram)
-      (date)
+      (date )
       (time)
     )
   )
