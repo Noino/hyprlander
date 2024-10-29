@@ -3,7 +3,9 @@ Stumbling through my first real try at linux desktop
 Dependencies: yes!
 
 sudo pacman -S git go
+
 sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
+
 yay -S ripgrep wl-clipboard-history wl-paste wlsunset hyprpaper hyprlock eww wezterm firefox wlogout wofi grimblast npm neovim ttf-jetbrains-mono-nerd
 
 
