@@ -1,4 +1,4 @@
 #!/bin/sh
 
-echo `yay -Qu | wc -l`;
+echo `checkupdates | wc -l`;
 
