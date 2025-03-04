@@ -86,6 +86,10 @@ done
 # tmux & tmuxifier shorthand for attach/load
 export PATH="$HOME/.local/share/tmuxifier/bin:$PATH"
 amux() {
-    [ -z $1 ] && tmux at || tmuxifier s $1 2>/dev/null || (tmux at -d -t $1 && exit 1)
+    if [ -z $1 ]; then
+        tmux ls >/dev/null 2>/dev/null && tmux at || tmux
+    else
+        tmuxifier s $1 2>/dev/null || tmux at -d -t $1
+    fi
 }
 
