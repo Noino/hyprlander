@@ -89,7 +89,8 @@ amux() {
     if [ -z $1 ]; then
         tmux ls >/dev/null 2>/dev/null && tmux at || tmux
     else
-        tmuxifier s $1 2>/dev/null || tmux at -d -t $1
+        tmuxifier s $1 2>/dev/null || tmux new-session -A -s $1
     fi
 }
 
+eval "$(fzf --bash)"
