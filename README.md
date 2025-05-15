@@ -4,7 +4,7 @@
 
 be sure to grab submodules too
 ```
-git clone --recurse-submodules ... 
+git clone --recurse-submodules ...
 ```
 
 Dependencies: yes!
@@ -12,14 +12,18 @@ This is not a complete list, and it assumes hyprland, on other systems you dont 
 ```
 sudo pacman -S git go
 sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
-yay -S ripgrep wl-clipboard-history wl-paste wlsunset hyprpaper hyprlock eww wezterm firefox wlogout wofi grimblast npm neovim ttf-jetbrains-mono-nerd
+yay -S ripgrep wl-clipboard-history wl-paste wlsunset hyprpaper hyprlock eww ghostty wezterm firefox wlogout npm neovim ttf-jetbrains-mono-nerd grim walker iwmenu bzmenu waybar ...
 ```
+
+
+
 
 
 
 ## Acknowledgments
 
 Sources of copypasta inspiration
+- https://github.com/JaKooLit/Arch-Hyprland
 - https://github.com/Axarva/dotfiles-2.0
 - https://github.com/fufexan/dotfiles
 - https://github.com/end-4/dots-hyprland

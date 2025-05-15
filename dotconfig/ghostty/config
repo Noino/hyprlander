@@ -1,0 +1,11 @@
+
+command = bash --login
+
+theme = tokyonight_night
+#background = 000000
+background-opacity = 0.85
+background-blur = false
+
+shell-integration-features = no-cursor,no-sudo,no-title
+gtk-titlebar = false
+

@@ -2,3 +2,5 @@
     path = dotconfig/nvim
     url = git@github.com:Noino/nvim
     update = rebase
+[submodules "dotconfig/nvim"]
+	master = master
