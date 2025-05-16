@@ -1,2 +1,7 @@
 dotconfig/gtk-3.0/bookmarks
 dotconfig/dconf/user
+dotconfig/hypr/monitors.conf
+dotconfig/hypr/workspaces.conf
+dotconfig/hypr/conf.local.d
+dotconfig/hypr/conf.local.d/*
+
