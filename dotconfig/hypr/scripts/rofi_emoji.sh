@@ -1,1 +1,0 @@
-../../../scripts/rofi_emoji.sh
