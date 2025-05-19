@@ -1,0 +1,167 @@
+* {
+    font-family: "JetBrainsMono Nerd Font";
+    font-weight: bold;
+    min-height: 0;
+    font-size: 100%;
+    font-feature-settings: '"zero", "ss01", "ss02", "ss03", "ss04", "ss05", "cv31"';
+}
+
+window#waybar {
+    background-color: black;
+    /* border-bottom-left-radius: 6px;
+border-bottom-right-radius: 6px;
+padding-top: 2px;
+padding-bottom: 0px;
+*/
+    padding-right: 4px;
+    padding-left: 4px;
+}
+
+tooltip {
+    background: #1e1e2e;
+    border-radius: 12px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #73378F;
+    color: #ffffff;
+}
+
+/*-----module groups----*/
+.modules-left,
+.modules-right {
+    background-color: transparent;
+}
+
+.modules-left label,
+.modules-right label {
+    color: #dddddd;
+    padding-right: 4px;
+    padding-left: 4px;
+}
+
+
+#taskbar button,
+#workspaces button {
+    padding: 2px 1px 0 0;
+    margin: 8px 1px;
+    border-radius: 4px;
+    color: #000000;
+    background-color: #474747;
+    transition: all 0.1s linear;
+    opacity: 0.4;
+}
+
+#taskbar button.active,
+#workspaces button.active {
+    color: #000000;
+    background: #434343;
+    border-radius: 4px;
+    min-width: 30px;
+    animation: gradient_f 20s ease-in infinite;
+    transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.682);
+    opacity: 1.0;
+}
+
+#taskbar button:hover,
+#workspaces button:hover {
+    color: #000000;
+    background: #656565;
+    border-radius: 3px;
+    opacity:0.8;
+    animation: gradient_f 20s ease-in infinite;
+    transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.682);
+}
+
+#workspaces button.focused {
+    color: #000000;
+}
+
+#workspaces button.urgent {
+    color: #000000;
+    border-radius: 10px;
+}
+
+
+.modules-center {
+    background-color: #25253a;
+    border-radius: 0px 0px 25px 25px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+.modules-center label {
+    color: #c7a2c9;
+}
+
+#idle_inhibitor.activated {
+    color: #39FF14;
+}
+
+#custom-swaync {
+    color: #cdaa00;
+}
+
+#custom-separator {
+ color: #DDDDDD;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* notaworky!
+#pulseaudio.speaker.muted,
+#pulseaudio.microphone.muted {
+    color: #FF0000;
+}
+*/
+
+#temperature.critical {
+    background-color: #ff0000;
+}
+
+@keyframes blink {
+    to {
+        color: #FFFFFF;
+    }
+}
+#battery.critical:not(.charging) {
+    color: #FF0000;
+    animation-name: blink;
+    animation-duration: 2.0s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#backlight-slider slider {
+    min-width: 0px;
+    min-height: 0px;
+    opacity: 0;
+    background-image: none;
+    border: none;
+    box-shadow: none;
+}
+
+#backlight-slider trough {
+    min-width: 40px;
+    min-height: 5px;
+    border-radius: 5px;
+}
+
+#backlight-slider highlight {
+    min-height: 10px;
+    border-radius: 5px;
+}
+
+

@@ -1,0 +1,32 @@
+
+command = bash --login
+
+theme = tokyonight_night
+#background = 000000
+background-opacity = 0.85
+background-blur = false
+
+shell-integration-features = no-cursor,no-sudo,no-title
+gtk-titlebar = false
+
+
+# disable all tabs
+keybind = ctrl+page_down=unbind
+keybind = alt+five=unbind
+keybind = alt+eight=unbind
+keybind = ctrl+shift+left=unbind
+keybind = ctrl+shift+w=unbind
+keybind = alt+three=unbind
+keybind = ctrl+page_up=unbind
+keybind = ctrl+tab=unbind
+keybind = ctrl+shift+right=unbind
+keybind = alt+nine=unbind
+keybind = ctrl+shift+t=unbind
+keybind = ctrl+shift+tab=unbind
+keybind = alt+two=unbind
+keybind = alt+four=unbind
+keybind = alt+one=unbind
+keybind = alt+six=unbind
+keybind = alt+seven=unbind
+
+

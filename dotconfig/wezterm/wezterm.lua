@@ -21,7 +21,7 @@ config.font = wezterm.font('JetBrains Mono')
 config.window_background_opacity = 0.85
 config.hide_tab_bar_if_only_one_tab = true
 config.audible_bell = 'Disabled'
-config.enable_kitty_keyboard = true
+config.enable_kitty_keyboard = false
 config.enable_wayland = false
 
 

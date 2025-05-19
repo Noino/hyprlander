@@ -1,0 +1,53 @@
+{
+    "include": [
+        "$HOME/.config/waybar/mods",
+    ],
+    "layer": "top",
+    "exclusive": true,
+    "passthrough": false,
+    "position": "top",
+    "spacing": 3,
+    "fixed-center": true,
+    "ipc": true,
+    "margin-top": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+
+    "modules-left": [
+        "hyprland/workspaces",
+        "custom/updater",
+        "custom/separator#dot-line",
+        "hyprland/window",
+        "custom/separator#dot-line",
+        "custom/playerctl",
+    ],
+
+    "modules-center": [
+        "custom/swaync",
+        "custom/separator#dot-line",
+        "clock",
+        "custom/separator#dot-line",
+        "idle_inhibitor",
+    ],
+
+    "modules-right": [
+        "pulseaudio#speaker",
+        "pulseaudio#microphone",
+        "custom/separator#dot-line",
+        "temperature",
+        "group/hardware",
+        "custom/separator#dot-line",
+        "group/backlight",
+        "custom/separator#dot-line",
+        "battery",
+        "network",
+        "tray",
+        "custom/power",
+    ],
+}
+
+
+
+
+
+
