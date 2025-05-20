@@ -86,9 +86,10 @@ tooltip {
     background-color: #25253a;
     border-radius: 0px 0px 25px 25px;
     padding-top: 4px;
-    padding-bottom: 4px;
+    padding-bottom: 0;
     padding-left: 14px;
     padding-right: 14px;
+    margin: 0 0 4px 0;
 }
 
 .modules-center label {

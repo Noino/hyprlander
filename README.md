@@ -26,6 +26,7 @@ Refer to JaKooLit's dotfiles on how to install sddm theme and gtk icons - or jus
 ## Acknowledgments
 
 Sources of copypasta inspiration
+- https://github.com/Gl00ria/dotfiles
 - https://github.com/JaKooLit/Arch-Hyprland
 - https://github.com/Axarva/dotfiles-2.0
 - https://github.com/fufexan/dotfiles
