@@ -24,6 +24,11 @@ for d in ${src_dir}/dotconfig/*; do
     [[ -d $d ]] && ln -s "$d/" || ln -s "$d"
 done
 
+# kde default apps thingy
+sudo ln -sf /etc/xdg/menus/plasma-applications.menu /etc/xdg/menus/applications.menu
+kbuildsycoca6
+
+
 # Gotta rethink think step for :Lazy
 #[[ -e  ~/.local/share/nvim/site/pack/packer/start/packer.nvim ]] || git clone --depth 1 https://github.com/wbthomason/packer.nvim ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 #nvim \"${src_dir}\"/dotconfig/nvim/lua/theprimeagen/packer.lua --noplugin -c ":so | :PackerSync"

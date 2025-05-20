@@ -45,19 +45,19 @@
         "tooltip": false,
     },
 
-"backlight": {
-	"interval": 2,
-	"align": 0,
-	"rotate": 0,
-    "format-icons": ["","","","","","","","","","","","","","",""],
-	"format": "{icon} {percent}%",
-	"tooltip-format": "Brightness {percent}%",
-	"icon-size": 10,
-	"on-update": "",
-	"on-scroll-up": "brightnessctl set +5%",
-	"on-scroll-down": "brightnessctl set 5%-",
-	"smooth-scrolling-threshold": 1,
-},
+    "backlight": {
+        "interval": 2,
+        "align": 0,
+        "rotate": 0,
+        "format-icons": ["","","","","","","","","","","","","","",""],
+        "format": "{icon} {percent}%",
+        "tooltip-format": "Brightness {percent}%",
+        "icon-size": 10,
+        "on-update": "",
+        "on-scroll-up": "brightnessctl set +5%",
+        "on-scroll-down": "brightnessctl set 5%-",
+        "smooth-scrolling-threshold": 1,
+    },
 
     "backlight/slider": {
         "min": 0,
@@ -251,7 +251,7 @@
             "transition-duration": 500,
             "children-class": "cpu",
             "transition-left-to-right": true
-            },
+        },
         "modules": [
             "memory",
             "cpu",
@@ -290,101 +290,102 @@
         "tooltip": true,
         "tooltip-format": "{used} used out of {total} on {path} ({percentage_used}%)",
     },
-"network": {
-	"interval": 1,
-	"format": "{ifname}",
-	"format-wifi": "{icon}",
-	"format-ethernet": "󰌘 ",
-	"format-disconnected": "󰌙 ",
-	"tooltip-format": "{ipaddr}\n {bandwidthUpBytes}\n {bandwidthDownBytes}",
-	"format-linked": "󰈁 {ifname} (No IP)",
-	"tooltip-format-wifi": "{essid} {icon} {signalStrength}%\n {bandwidthUpBytes}\n {bandwidthDownBytes}",
-	"tooltip-format-ethernet": "{ifname} 󰌘 \n {bandwidthUpBytes}\n {bandwidthDownBytes}",
-	"tooltip-format-disconnected": "󰌙 Disconnected",
-	"format-icons": [
-		"󰤯", "󰤟", "󰤢", "󰤥", "󰤨"
-	]
-},
+    "network": {
+        "interval": 1,
+        "format": "{ifname}",
+        "format-wifi": "{icon}",
+        "format-ethernet": "󰌘 ",
+        "format-disconnected": "󰌙 ",
+        "tooltip-format": "{ipaddr}\n {bandwidthUpBytes}\n {bandwidthDownBytes}",
+        "format-linked": "󰈁 {ifname} (No IP)",
+        "tooltip-format-wifi": "{essid} {icon} {signalStrength}%\n {bandwidthUpBytes}\n {bandwidthDownBytes}",
+        "tooltip-format-ethernet": "{ifname} 󰌘 \n {bandwidthUpBytes}\n {bandwidthDownBytes}",
+        "tooltip-format-disconnected": "󰌙 Disconnected",
+        "format-icons": [
+            "󰤯", "󰤟", "󰤢", "󰤥", "󰤨"
+        ]
+    },
 
-"custom/swaync": {
-	"tooltip": true,
-	"tooltip-format": "Left Click: Launch Notification Center\nRight Click: Do not Disturb",
-	"format": "{} {icon} ",
-	"format-icons": {
-		"notification": "<span foreground='red'><sup></sup></span>",
-		"none": "",
-		"dnd-notification": "<span foreground='red'><sup></sup></span>",
-		"dnd-none": "",
-		"inhibited-notification": "<span foreground='red'><sup></sup></span>",
-		"inhibited-none": "",
-		"dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
-		"dnd-inhibited-none": ""
-	},
-	"return-type": "json",
-	"exec-if": "which swaync-client",
-	"exec": "swaync-client -swb",
-	"on-click": "sleep 0.1 && swaync-client -t -sw",
-	"on-click-right": "swaync-client -d -sw",
-	"escape": true,
-},
+    "custom/swaync": {
+        "tooltip": true,
+        "tooltip-format": "Left Click: Launch Notification Center\nRight Click: Do not Disturb",
+        "format": "{} {icon} ",
+        "format-icons": {
+            "notification": "<span foreground='red'><sup></sup></span>",
+            "none": "",
+            "dnd-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-none": "",
+            "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+            "inhibited-none": "",
+            "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-inhibited-none": ""
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "sleep 0.1 && swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true,
+    },
 
 
-"clock": {
-	"interval": 1,
-    "locale": "en_DK.UTF-8",
-    "format": " {:%H:%M:%S}",
-	"format-alt": " {:%H:%M  %d.%m.%Y %A}",
-	"tooltip-format": "<tt><small>{calendar}</small></tt>",
-	"calendar": {
-		"mode": "year",
-		"mode-mon-col": 3,
-		"weeks-pos": "left",
-		"on-scroll": 1,
-		"format": {
-			"months": "<span color='#ffead3'><b>{}</b></span>",
-			"days": "<span color='#ecc6d9'><b>{}</b></span>",
-			"weeks": "<span color='#99ffdd'><b>W{}</b></span>",
-			"weekdays": "<span color='#ffcc66'><b>{}</b></span>",
-			"today": "<span color='#ff6699'><b><u>{}</u></b></span>"
-		},
-	}
-},
+    "clock": {
+        "interval": 1,
+        "locale": "en_DK.UTF-8",
+        "format": " {:%H:%M:%S}",
+        "format-alt": " {:%H:%M  %d.%m.%Y %A}",
+        "tooltip": true,
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "year",
+            "mode-mon-col": 3,
+            "weeks-pos": "left",
+            "on-scroll": 1,
+            "format": {
+                "months": "<span color='#ffead3'><b>{}</b></span>",
+                "days": "<span color='#ecc6d9'><b>{}</b></span>",
+                "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+                "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+                "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+            },
+        }
+    },
 
-"battery": {
-    "interval": 5,
-	"align": 0,
-	"rotate": 0,
-	"full-at": 80,
-	"design-capacity": false,
-	"states": {
-		"good": 70,
-		"warning": 30,
-		"critical": 15
-	},
-	"format": "{icon} {capacity}%",
-	"format-charging": " {capacity}%",
-	"format-plugged": "󱘖 {capacity}%",
-	"format-alt-click": "click",
-	"format-full": "{icon} Full",
-	"format-alt": "{icon} {time}",
-	"format-icons": [
-		"󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"
-	],
-	"format-time": "{H}h {M}min",
-	"tooltip": true,
-	"tooltip-format": "{timeTo}\nCurrent draw: {power}w",
-},
+    "battery": {
+        "interval": 5,
+        "align": 0,
+        "rotate": 0,
+        "full-at": 80,
+        "design-capacity": false,
+        "states": {
+            "good": 70,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": "󱘖 {capacity}%",
+        "format-alt-click": "click",
+        "format-full": "{icon} Full",
+        "format-alt": "{icon} {time}",
+        "format-icons": [
+            "󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"
+        ],
+        "format-time": "{H}h {M}min",
+        "tooltip": true,
+        "tooltip-format": "{timeTo}\nCurrent draw: {power}w",
+    },
 
-"idle_inhibitor": {
-	"tooltip": true,
-	"tooltip-format-activated": "Idle_inhibitor active",
-	"tooltip-format-deactivated": "Idle_inhibitor not active",
-	"format": "{icon}",
-	"format-icons": {
-		"activated": " ",
-		"deactivated": " ",
-	}
-},
+    "idle_inhibitor": {
+        "tooltip": true,
+        "tooltip-format-activated": "Idle_inhibitor active",
+        "tooltip-format-deactivated": "Idle_inhibitor not active",
+        "format": "{icon}",
+        "format-icons": {
+            "activated": " ",
+            "deactivated": " ",
+        }
+    },
 
 
 

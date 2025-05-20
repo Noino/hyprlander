@@ -1,6 +1,6 @@
 {
     "include": [
-        "$HOME/.config/waybar/mods",
+        "$HOME/.config/waybar/mods.jsonc",
     ],
     "layer": "top",
     "exclusive": true,
