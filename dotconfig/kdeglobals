@@ -134,6 +134,8 @@ ForegroundVisited=155,89,182
 
 [General]
 ColorSchemeHash=0be804dba87e3512aeb4be3d78ed981f59f0f2f4
+TerminalApplication=ghostty
+TerminalService=com.mitchellh.ghostty.desktop
 
 [KDE]
 AnimationDurationFactor=0.25

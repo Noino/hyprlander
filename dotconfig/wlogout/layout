@@ -24,7 +24,7 @@
 }
 {
     "label" : "logout",
-    "action" : "hyprctl dispatch exit 0; loginctl terminate-user $USER; systemctl restart sddm",
+    "action" : "hyprctl dispatch exit 0; systemctl restart sddm",
     "text" : "Logout",
     "keybind" : "e"
 }
