@@ -1,4 +1,4 @@
-# Stumbling through my first real try at linux desktop
+# Stumbling through my ~first~ second real try at linux desktop
 
 ## install
 
