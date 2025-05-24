@@ -22,7 +22,8 @@ yay -S -needed adobe-source-code-pro-fonts bc blueman bluez bluez-utils brightne
 Refer to JaKooLit's dotfiles on how to install sddm theme and gtk icons - or just use his stuff, since this is a no options or gui configs and strictly the way i want it
 
 --
-Since git cant keep files and then ignore future update, some base for local confs can be added with
+
+Since git cant keep files and then ignore future updates, a base for local confs can be added with
 ```
 git checkout hypr_local_example -- dotconfig/hypr/conf.local.d/
 git restore --staged .
