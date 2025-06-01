@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-/usr/bin/which go >/dev/null || { echo "Gotta install golang first" && exit 1; }
-/usr/bin/which rg >/dev/null || { echo "Gotta install ripgrep first" && exit 2; }
-/usr/bin/which npm >/dev/null || { echo "Gotta install npm *vomit*" && exit 3; }
+/usr/bin/which go >/dev/null || { sudo pacman -S git go; }
+/usr/bin/which yay >/dev/null || { sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si; yay -Syy yay-bin; }
+
+# install stuffs if needed
+yay -S --needed adobe-source-code-pro-fonts bc blueman bluez bluez-utils brightnessctl btop bzmenu cliphist curl eww fastfetch firefox ghostty grim gvfs gvfs-mtp hypridle hyprland hyprlock hyprpaper hyprpolkitagent imagemagick iwmenu jq kvantum libspng mousepad mpv mpv-mpris neovim network-manager-applet noto-fonts noto-fonts-emoji npm nvtop nwg-displays nwg-look otf-font-awesome pacman-contrib pamixer pavucontrol pipewire pipewire-alsa pipewire-audio pipewire-pulse playerctl qalculate-gtk qt5ct qt6-5compat qt6-declarative qt6-svg qt6ct ripgrep sddm slurp sof-firmware swaync ttf-droid ttf-fantasque-nerd ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd ttf-victor-mono umockdev unzip walker-bin waybar wezterm wget wl-clipboard wl-clipboard-history wl-paste wlogout wlsunset xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-hyprland xdg-desktop-portal-kde xdg-user-dirs xdg-utils yad
 
 # get our working directory straight
 cd $(dirname $0)
@@ -25,8 +27,7 @@ for d in ${src_dir}/dotconfig/*; do
 done
 
 # kde default apps thingy
-sudo ln -sf /etc/xdg/menus/plasma-applications.menu /etc/xdg/menus/applications.menu
-kbuildsycoca6
+XDG_MENU_PREFIX=arch- kbuildsycoca6
 
 
 # Gotta rethink think step for :Lazy
