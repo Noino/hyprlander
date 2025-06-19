@@ -5,3 +5,4 @@ dotconfig/hypr/workspaces.conf
 dotconfig/hypr/conf.local.d
 dotconfig/hypr/conf.local.d/*
 
+dotconfig/xdg-desktop-portal-kderc
