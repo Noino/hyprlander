@@ -17,7 +17,7 @@ yay -Sq --needed --noconfirm \
  cliphist\
  curl\
  fastfetch\
- firefox\
+ zen-browser-bin\
  ghostty\
  grim\
  gvfs-mtp\

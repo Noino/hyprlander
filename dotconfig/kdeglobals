@@ -132,6 +132,11 @@ ForegroundNormal=252,252,252
 ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
+[DirSelect Dialog]
+DirSelectDialog Size=819,591
+History Items[$e]=file:$HOME/Videos/OBS
+Splitter State=\x00\x00\x00\xff\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x8b\x00\x00\x02\xa8\x00\xff\xff\xff\xff\x01\x00\x00\x00\x01\x00
+
 [General]
 ColorSchemeHash=0be804dba87e3512aeb4be3d78ed981f59f0f2f4
 TerminalApplication=ghostty
