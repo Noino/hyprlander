@@ -9,7 +9,7 @@ alias vim='nvim'
 export EDITOR=nvim
 
 # Command history longer and better formatting
-HISTSIZE=50000
+HISTSIZE=1024000
 HISTFILESIZE=1024000
 HISTTIMEFORMAT="%d.%m.%y %T "
 
