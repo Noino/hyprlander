@@ -73,7 +73,6 @@ yay -Sq --needed \
  waybar\
  wezterm\
  wget\
- wireplumber\
  wl-clipboard-history\
  wl-clipboard\
  wl-paste\
