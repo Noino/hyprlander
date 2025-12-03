@@ -93,4 +93,13 @@ amux() {
     fi
 }
 
+cam() {
+  # Check if the camera device exists
+  if [[ -c /dev/video0 ]]; then
+    mpv av://v4l2:/dev/video0 --profile=low-latency --untimed --osd-msg1="Press 's' to grab a snapshot" --osd-duration=10000 --vf=hflip
+  else
+    echo "No camera found at /dev/video0."
+  fi
+}
+
 eval "$(fzf --bash)"
