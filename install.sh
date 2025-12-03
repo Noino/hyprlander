@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# get our working directory straight
+cd $(dirname $0)
+export src_dir=`pwd`;
+
 # if has args, run only specified modules
 # otherwise run all modules in the install folder sorted alphabetically
 if [ "$#" -gt 0 ]; then

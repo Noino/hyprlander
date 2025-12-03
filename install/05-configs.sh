@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# get our working directory straight
-cd $(dirname $0)
-src_dir=`pwd`;
-
 # source bash configs at end of profile
 [[ `rg "${src_dir##*/}" ~/.bash_profile` ]] || echo "[[ -f \"${src_dir}\"/bash_configs ]] && . \"${src_dir}\"/bash_configs" >> ~/.bash_profile
 
@@ -19,6 +15,8 @@ for d in ${src_dir}/dotconfig/*; do
     # make install
     [[ -d $d ]] && ln -s "$d/" || ln -s "$d"
 done
+
+ln -s "${src_dir}"/scripts ~/.config/.scripts
 
 # kde default apps thingy
 XDG_MENU_PREFIX=arch- kbuildsycoca6
