@@ -22,6 +22,12 @@ shopt -s histverify
 # Fix bash history in tmux sessions by appending to history file
 shopt -s histappend
 
+# Turn on recursive globbing (enables ** to recurse all directories)
+shopt -s globstar 2> /dev/null
+
+# Case-insensitive globbing (used in pathname expansion)
+shopt -s nocaseglob;
+
 # Make tab completion case insensitive
 bind -s 'set completion-ignore-case on'
 
