@@ -71,7 +71,6 @@ yay -Sq --needed \
  umockdev\
  unzip\
  waybar\
- wezterm\
  wget\
  wl-clipboard-history\
  wl-clipboard\
