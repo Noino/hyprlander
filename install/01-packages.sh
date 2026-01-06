@@ -15,6 +15,7 @@ yay -Sq --needed \
  cliphist\
  curl\
  fastfetch\
+ fzf\
  ghostty\
  go\
  grim\
