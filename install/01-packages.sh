@@ -29,6 +29,7 @@ yay -Sq --needed \
  hyprpolkitagent\
  imagemagick\
  jq\
+ keepassxc\
  kvantum\
  libspng\
  mousepad\
@@ -63,6 +64,7 @@ yay -Sq --needed \
  slurp\
  sof-firmware\
  swaync\
+ tmux\
  ttf-droid\
  ttf-fantasque-nerd\
  ttf-fira-code\
