@@ -14,6 +14,7 @@ yay -Sq --needed \
  btop\
  cliphist\
  curl\
+ dolphin\
  fastfetch\
  fzf\
  ghostty\
@@ -21,6 +22,7 @@ yay -Sq --needed \
  grim\
  gvfs-mtp\
  gvfs\
+ hyprcursor\
  hypridle\
  hyprland\
  hyprlock\
