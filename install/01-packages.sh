@@ -60,12 +60,13 @@ yay -Sq --needed \
  qt6-5compat\
  qt6-declarative\
  qt6-svg\
- qt6ct\
+ qt6ct-kde\
+ dms-shell-bin\
+ qt6-multimedia\
  ripgrep\
  sddm\
  slurp\
  sof-firmware\
- swaync\
  tmux\
  ttf-droid\
  ttf-fantasque-nerd\
@@ -75,7 +76,6 @@ yay -Sq --needed \
  ttf-victor-mono\
  umockdev\
  unzip\
- waybar\
  wget\
  wl-clipboard-history\
  wl-clipboard\
@@ -92,10 +92,10 @@ yay -Sq --needed \
  zen-browser-bin\
 ;
 
-command -v walker &>/dev/null || {
-    git clone --branch v0.13.26 --depth 1 https://github.com/abenz1267/walker /tmp/walker
-    cd /tmp/walker/cmd
-    go build -o walker
-    sudo cp walker /usr/bin/
-}
+#command -v walker &>/dev/null || {
+#    git clone --branch v0.13.26 --depth 1 https://github.com/abenz1267/walker /tmp/walker
+#    cd /tmp/walker/cmd
+#    go build -o walker
+#    sudo cp walker /usr/bin/
+#}
 
