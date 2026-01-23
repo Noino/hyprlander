@@ -80,7 +80,6 @@ yay -Sq --needed \
  wl-clipboard-history\
  wl-clipboard\
  wl-paste\
- wlogout\
  wlsunset\
  xdg-desktop-portal-gtk\
  xdg-desktop-portal-hyprland\
