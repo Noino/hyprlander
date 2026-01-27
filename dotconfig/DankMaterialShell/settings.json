@@ -172,7 +172,7 @@
   "launcherLogoBrightness": 0.5,
   "launcherLogoContrast": 1,
   "launcherLogoSizeOffset": 0,
-  "fontFamily": "JetBrains Mono",
+  "fontFamily": "JetBrains Mono Light",
   "monoFontFamily": "Fira Code",
   "fontWeight": 400,
   "fontScale": 1,
@@ -257,7 +257,7 @@
   "notificationOverlayEnabled": true,
   "modalDarkenBackground": true,
   "lockScreenShowPowerActions": true,
-  "lockScreenShowSystemIcons": true,
+  "lockScreenShowSystemIcons": false,
   "lockScreenShowTime": true,
   "lockScreenShowDate": true,
   "lockScreenShowProfileImage": true,
@@ -341,11 +341,6 @@
           "id": "focusedWindow",
           "enabled": true,
           "focusedWindowCompactMode": false
-        },
-        {
-          "id": "music",
-          "enabled": true,
-          "mediaSize": 1
         }
       ],
       "centerWidgets": [
@@ -376,6 +371,7 @@
           "id": "controlCenterButton",
           "enabled": true,
           "showAudioPercent": true,
+          "showVpnIcon": true,
           "showMicIcon": true
         },
         {
@@ -393,7 +389,15 @@
         },
         {
           "id": "memUsage",
-          "enabled": true
+          "enabled": true,
+          "minimumWidth": false,
+          "showSwap": false
+        },
+        {
+          "id": "gpuTemp",
+          "enabled": true,
+          "selectedGpuIndex": 0,
+          "pciId": "1002:73df"
         },
         {
           "id": "battery",
