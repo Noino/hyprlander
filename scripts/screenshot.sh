@@ -41,7 +41,7 @@ disable_nss_everywhere() {
 
     hyprctl -j clients | jq -r '.[] | "\(.address) client"' |
     while read -r addr type; do
-        val=$(hyprctl getprop address:$addr no_screen_share 2>/dev/null | awk '{print $1}')
+        val=${ hyprctl getprop address:$addr no_screen_share 2>/dev/null ; }
         echo "$type $addr $val" >> "$NSS_STATE_FILE"
         hyprctl -q dispatch setprop address:$addr no_screen_share false
     done
@@ -51,7 +51,7 @@ disable_nss_everywhere() {
         "\($a) layer"
     ' |
     while read -r addr type; do
-        val=$(hyprctl getprop address:$addr no_screen_share 2>/dev/null | awk '{print $1}')
+        val=${ hyprctl getprop address:$addr no_screen_share 2>/dev/null ; }
         echo "$type $addr $val" >> "$NSS_STATE_FILE"
         hyprctl -q dispatch setprop address:$addr no_screen_share false
     done
