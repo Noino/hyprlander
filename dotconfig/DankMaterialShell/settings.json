@@ -338,6 +338,10 @@
           "enabled": true
         },
         {
+          "id": "systemUpdate",
+          "enabled": true
+        },
+        {
           "id": "focusedWindow",
           "enabled": true,
           "focusedWindowCompactMode": false
@@ -373,10 +377,6 @@
           "showAudioPercent": true,
           "showVpnIcon": true,
           "showMicIcon": true
-        },
-        {
-          "id": "systemUpdate",
-          "enabled": true
         },
         {
           "id": "cpuTemp",
