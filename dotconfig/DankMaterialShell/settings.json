@@ -309,8 +309,8 @@
   "customPowerActionPowerOff": "",
   "updaterHideWidget": false,
   "updaterUseCustomCommand": true,
-  "updaterCustomCommand": "/usr/bin/yay --needed",
-  "updaterTerminalAdditionalParams": "-e /usr/bin/yay --needed",
+  "updaterCustomCommand": "",
+  "updaterTerminalAdditionalParams": "-e",
   "displayNameMode": "system",
   "screenPreferences": {
     "wallpaper": []
