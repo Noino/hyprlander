@@ -310,7 +310,7 @@
   "updaterHideWidget": false,
   "updaterUseCustomCommand": true,
   "updaterCustomCommand": "/usr/bin/yay --needed",
-  "updaterTerminalAdditionalParams": "ghostty -e /usr/bin/yay --needed",
+  "updaterTerminalAdditionalParams": "-e /usr/bin/yay --needed",
   "displayNameMode": "system",
   "screenPreferences": {
     "wallpaper": []

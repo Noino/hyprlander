@@ -37,10 +37,10 @@ for bat_path in /sys/class/power_supply/BAT*; do
     [[ -z "$design" || -z "$current" ]] && continue
     wear=$(awk -v d="$design" -v c="$current" 'BEGIN { printf("%.0f", 100 - (c/d*100)) }')
 
-    if   (( wear > 30 )); then START=80; STOP=95
-    elif (( wear > 20 )); then START=70; STOP=90
-    elif (( wear > 10 )); then START=65; STOP=85
-    else START=60; STOP=80
+    if   (( wear > 30 )); then START=85; STOP=95
+    elif (( wear > 20 )); then START=80; STOP=90
+    elif (( wear > 10 )); then START=75; STOP=85
+    else START=70; STOP=80
     fi
 
     echo "[$bat_name] wear=$wear% → thresholds $START/$STOP"
