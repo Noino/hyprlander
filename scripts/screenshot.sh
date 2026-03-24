@@ -20,6 +20,7 @@ screen() {
     restore_nss
     notify
 }
+
 window() {
     # disabling nss for active window only might suffice, dont have layers with nss yet
     local ADDR=$(hyprctl -j activewindow | jq -r .address)
@@ -29,9 +30,11 @@ window() {
     hyprctl -q dispatch setprop address:$ADDR no_screen_share $NSS
 	notify
 }
+
 area() {
     disable_nss_everywhere
 	grim -g "$(slurp)" - | tee "$dir/$file" | wl-copy
+    wait
     restore_nss
 	notify
 }
@@ -39,30 +42,41 @@ area() {
 disable_nss_everywhere() {
     NSS_STATE_FILE=$(mktemp)
 
-    hyprctl -j clients | jq -r '.[] | "\(.address) client"' |
-    while read -r addr type; do
-        val=${ hyprctl getprop address:$addr no_screen_share 2>/dev/null ; }
-        echo "$type $addr $val" >> "$NSS_STATE_FILE"
-        hyprctl -q dispatch setprop address:$addr no_screen_share false
+    hyprctl -j clients | jq -r '
+      .[] | select(.tags | index("private*")) | .address
+    ' | while read -r addr; do
+        echo "client $addr" >> "$NSS_STATE_FILE"
+        hyprctl -q dispatch tagwindow -- -private* address:$addr
     done
 
     hyprctl -j layers | jq -r '
-        .[][].address as $a |
-        "\($a) layer"
-    ' |
-    while read -r addr type; do
-        val=${ hyprctl getprop address:$addr no_screen_share 2>/dev/null ; }
-        echo "$type $addr $val" >> "$NSS_STATE_FILE"
+      .[][].address
+    ' | while read -r addr; do
+        val=$(hyprctl getprop address:$addr no_screen_share 2>/dev/null)
+        [[ "$val" == "true" ]] || continue
+
+        echo "layer $addr" >> "$NSS_STATE_FILE"
         hyprctl -q dispatch setprop address:$addr no_screen_share false
     done
 }
+
 restore_nss() {
-    while read -r type addr val; do
-        [[ "$val" == "true" ]] || continue
-        hyprctl -q dispatch setprop address:$addr no_screen_share true
+    while read -r type addr; do
+        case "$type" in
+            client) hyprctl -q dispatch tagwindow +private* address:$addr ;;
+            layer) hyprctl -q dispatch setprop address:$addr no_screen_share true ;;
+        esac
     done < "$NSS_STATE_FILE"
+
     rm -f "$NSS_STATE_FILE"
 }
+
+test() {
+    disable_nss_everywhere
+    sleep 10
+    restore_nss
+}
+
 
 $@;
 
