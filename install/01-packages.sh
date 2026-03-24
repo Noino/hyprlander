@@ -25,7 +25,6 @@ yay -Sq --needed \
  hyprcursor\
  hypridle\
  hyprland\
- hyprpaper\
  hyprpicker\
  hyprpolkitagent\
  imagemagick\

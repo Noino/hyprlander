@@ -383,7 +383,9 @@
   "updaterTerminalAdditionalParams": "-e",
   "displayNameMode": "system",
   "screenPreferences": {
-    "wallpaper": []
+    "wallpaper": [
+      "all"
+    ]
   },
   "showOnLastDisplay": {},
   "niriOutputSettings": {},
