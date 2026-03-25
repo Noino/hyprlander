@@ -34,7 +34,6 @@ window() {
 area() {
     disable_nss_everywhere
 	grim -g "$(slurp)" - | tee "$dir/$file" | wl-copy
-    wait
     restore_nss
 	notify
 }
@@ -49,22 +48,24 @@ disable_nss_everywhere() {
         hyprctl -q dispatch tagwindow -- -private* address:$addr
     done
 
-    hyprctl -j layers | jq -r '
-      .[][].address
-    ' | while read -r addr; do
-        val=$(hyprctl getprop address:$addr no_screen_share 2>/dev/null)
-        [[ "$val" == "true" ]] || continue
-
-        echo "layer $addr" >> "$NSS_STATE_FILE"
-        hyprctl -q dispatch setprop address:$addr no_screen_share false
-    done
+# currently hyprland doesnt support querying properties of layers
+#    hyprctl -j layers | jq -r '
+#      .[][].address
+#    ' | while read -r addr; do
+#        val=$(hyprctl getprop address:$addr no_screen_share 2>/dev/null)
+#        [[ "$val" == "true" ]] || continue
+#
+#        echo "layer $addr" >> "$NSS_STATE_FILE"
+#        hyprctl -q dispatch setprop address:$addr no_screen_share false
+#    done
 }
 
 restore_nss() {
     while read -r type addr; do
         case "$type" in
             client) hyprctl -q dispatch tagwindow +private* address:$addr ;;
-            layer) hyprctl -q dispatch setprop address:$addr no_screen_share true ;;
+# currently hyprland doesnt support querying properties of layers
+#            layer) hyprctl -q dispatch setprop address:$addr no_screen_share true ;;
         esac
     done < "$NSS_STATE_FILE"
 
