@@ -142,10 +142,14 @@ ColorSchemeHash=0be804dba87e3512aeb4be3d78ed981f59f0f2f4
 TerminalApplication=ghostty
 TerminalService=com.mitchellh.ghostty.desktop
 
+[Icons]
+Theme=breeze-dark
+
 [KDE]
 AnimationDurationFactor=0.25
 LookAndFeelPackage=org.kde.breezedark.desktop
 ShowDeleteCommand=false
+widgetStyle=qt6ct-style
 
 [KFileDialog Settings]
 Allow Expansion=false
