@@ -72,6 +72,7 @@ yay -Sq --needed \
  ttf-jetbrains-mono-nerd\
  ttf-jetbrains-mono\
  ttf-victor-mono\
+ tree-sitter-cli\
  umockdev\
  unzip\
  wget\
