@@ -75,6 +75,7 @@ yay -Sq --needed \
  tree-sitter-cli\
  umockdev\
  unzip\
+ uwsm\
  wget\
  wl-clipboard-history\
  wl-clipboard\

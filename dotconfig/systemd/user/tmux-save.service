@@ -1,0 +1,12 @@
+[Unit]
+Description=Save tmux sessions before shutdown
+DefaultDependencies=no
+Before=shutdown.target reboot.target halt.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.tmux/plugins/tmux-resurrect/scripts/save.sh
+Environment=TMUX_PLUGIN_MANAGER_PATH=%h/.tmux/plugins
+
+[Install]
+WantedBy=shutdown.target reboot.target halt.target

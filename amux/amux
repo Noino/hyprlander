@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+AMUX_DIR="$(dirname "$(realpath "$0")")"
+GLOBAL_DIR="$AMUX_DIR/sessions"
+LOCAL_DIR="$AMUX_DIR/sessions.local"
+
+resolve_session() {
+  local name="$1"
+  [[ -f "$LOCAL_DIR/$name.sh" ]]  && echo "$LOCAL_DIR/$name.sh"  && return
+  [[ -f "$GLOBAL_DIR/$name.sh" ]] && echo "$GLOBAL_DIR/$name.sh" && return
+}
+
+case "$1" in
+  task)
+    script=$(resolve_session _task)
+    [[ -z "$script" ]] && echo "no _task.sh template found" && exit 1
+    bash "$script" "$2"
+    ;;
+  dev)
+    script=$(resolve_session _dev)
+    [[ -z "$script" ]] && echo "no _dev.sh template found" && exit 1
+    bash "$script" "$2"
+    ;;
+  master)
+    script=$(resolve_session _dev)
+    [[ -z "$script" ]] && echo "no _dev.sh template found" && exit 1
+    bash "$script" master
+    ;;
+  "")
+    if tmux ls >/dev/null 2>/dev/null; then
+      [[ -n "$TMUX" ]] && tmux choose-session || tmux attach
+    else
+      tmux
+    fi
+    ;;
+  *)
+    script=$(resolve_session "$1")
+    if [[ -n "$script" ]]; then
+      bash "$script"
+    else
+      tmux new-session -A -s "$1"
+    fi
+    ;;
+esac

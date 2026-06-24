@@ -16,7 +16,11 @@ for d in ${src_dir}/dotconfig/*; do
     [[ -d $d ]] && ln -s "$d/" || ln -s "$d"
 done
 
+[[ -L ~/.config/.scripts ]] && rm ~/.config/.scripts
 ln -s "${src_dir}"/scripts ~/.config/.scripts
+
+# TPM
+[[ -d ~/.tmux/plugins/tpm ]] || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # kde default apps thingy
 XDG_MENU_PREFIX=arch- kbuildsycoca6

@@ -1,0 +1,13 @@
+[Unit]
+Description=Wayland clipboard image history
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/wl-paste --type image --watch cliphist store
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target

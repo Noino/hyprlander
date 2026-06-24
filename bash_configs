@@ -29,14 +29,18 @@ shopt -s globstar 2> /dev/null
 shopt -s nocaseglob;
 
 # Make tab completion case insensitive
-bind -s 'set completion-ignore-case on'
+[[ $- == *i* ]] && bind -s 'set completion-ignore-case on'
 
-# Ensures common history for all sessions
-export PROMPT_COMMAND='history -a'
+# Ensures common history for all sessions (also set in PROMPT_COMMAND below)
 
 # Changes the terminal colors a bit
-parse_git_branch() {
-     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+_update_git_ps1() {
+  if [[ "$(git rev-parse --is-bare-repository 2>/dev/null)" == "true" ]]; then
+    GIT_PS1=$'\001\e[33m\002 (\001\e[2;37m\002⬡ bare\001\e[0;33m\002)\001\e[m\002'
+  else
+    local b; b=$(git branch --show-current 2>/dev/null)
+    GIT_PS1=${b:+$'\001\e[33m\002'" (${b})"$'\001\e[m\002'}
+  fi
 }
 
 if [ "$UID" = 0 ]; then
@@ -49,9 +53,9 @@ BP_JOBS="\[\e[1;31m\]\j\[\e[m\]";
 BP_TIME="\[\e[35m\]\t\[\e[m\]"
 BP_HOST="\[\e[32m\]\h\[\e[m\]"
 BP_PATH="\[\e[33;1m\]\w\[\e[m\]"
-BP_BRANCH="\[\e[33m\]\$(parse_git_branch)\[\e[m\]"
 
-export PS1="[${BP_TIME}][${BP_JOBS}] ${BP_USR}@${BP_HOST}:${BP_PATH}${BP_BRANCH}$ "
+export PROMPT_COMMAND="_update_git_ps1; history -a"
+export PS1="[${BP_TIME}][${BP_JOBS}] ${BP_USR}@${BP_HOST}:${BP_PATH}\${GIT_PS1}$ "
 
 # Extract any archive by just writing "extract"
 extract () {
@@ -89,15 +93,7 @@ for i in {1..20}; do
     alias .$i="cd ${d}"
 done
 
-# tmux & tmuxifier shorthand for attach/load
-export PATH="$HOME/.local/share/tmuxifier/bin:$PATH"
-amux() {
-    if [ -z $1 ]; then
-        tmux ls >/dev/null 2>/dev/null && tmux at || tmux
-    else
-        tmuxifier s $1 2>/dev/null || tmux new-session -A -s $1
-    fi
-}
+export PATH="$HOME/hyprlander/amux:$PATH"
 
 cam() {
   # Check if the camera device exists
