@@ -93,7 +93,7 @@ for i in {1..20}; do
     alias .$i="cd ${d}"
 done
 
-export PATH="$HOME/hyprlander/amux:$PATH"
+export PATH="$HOME/hyprlander/tmux:$PATH"
 
 cam() {
   # Check if the camera device exists

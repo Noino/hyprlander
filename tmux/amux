@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+AMUX_DIR="$(dirname "$(realpath "$0")")"
+GLOBAL_DIR="$AMUX_DIR/sessions"
+LOCAL_DIR="$AMUX_DIR/sessions.local"
+
+resolve_session() {
+  local name="$1"
+  [[ -f "$LOCAL_DIR/$name.sh" ]] && echo "$LOCAL_DIR/$name.sh" && return
+  [[ -f "$GLOBAL_DIR/$name.sh" ]] && echo "$GLOBAL_DIR/$name.sh" && return
+}
+
+list_templates() {
+  for dir in "$LOCAL_DIR" "$GLOBAL_DIR"; do
+    [[ -d "$dir" ]] || continue
+    for f in "$dir"/*.sh; do
+      [[ -f "$f" ]] || continue
+      basename "$f" .sh
+    done
+  done | sort -u
+}
+
+case "$1" in
+  "")
+    if tmux ls >/dev/null 2>&1; then
+      [[ -n "$TMUX" ]] && tmux switch-client -t "$(tmux list-sessions -F '#{session_name}' | head -1)" \
+        || tmux attach
+    else
+      exec "$0" new basic
+    fi
+    ;;
+  at)
+    [[ -z "$2" ]] && echo "usage: amux at <name>" && exit 1
+    tmux has-session -t "$2" 2>/dev/null || { echo "no session: $2"; exit 1; }
+    [[ -n "$TMUX" ]] && tmux switch-client -t "$2" || tmux attach -t "$2"
+    ;;
+  new)
+    shift
+    TMPL="${1:-}"
+    if [[ -z "$TMPL" ]]; then
+      TMPL=$(list_templates | fzf --prompt="template: " --height=10 --no-info)
+      [[ -z "$TMPL" ]] && TMPL="basic"
+    else
+      shift
+    fi
+    script=$(resolve_session "$TMPL")
+    [[ -z "$script" ]] && echo "no template: $TMPL" && exit 1
+    bash "$script" "$@"
+    ;;
+  rm)
+    TASK=""
+    export AMUX_FORCE=""
+    for arg in "${@:2}"; do
+      [[ "$arg" == "--force" ]] && AMUX_FORCE="--force" || TASK="$arg"
+    done
+    [[ -z "$TASK" ]] && echo "usage: amux rm <name> [--force]" && exit 1
+    template=$(tmux showenv -t "$TASK" AMUX_TEMPLATE 2>/dev/null | cut -d= -f2)
+    script=$(resolve_session "$template")
+    if [[ -n "$script" ]]; then
+      source "$script"
+      unload "$TASK"
+    else
+      tmux kill-session -t "$TASK" 2>/dev/null
+    fi
+    ;;
+  *)
+    echo "usage: amux [at <name>] [new [<tmpl> [args...]]] [rm <name> [--force]]"
+    exit 1
+    ;;
+esac
