@@ -34,9 +34,16 @@ check_git_clean() {
   local dir="$1" label="$2"
   [[ -d "$dir" ]] || return 0
   git -C "$dir" rev-parse --git-dir &>/dev/null || return 0
-  local dirty unpushed
+  local dirty unpushed branch
   dirty=$(git -C "$dir" status --porcelain 2>/dev/null)
-  unpushed=$(git -C "$dir" log "@{u}..HEAD" --oneline 2>/dev/null)
+  branch=$(git -C "$dir" branch --show-current 2>/dev/null)
+  if git -C "$dir" rev-parse --abbrev-ref "@{u}" &>/dev/null; then
+    unpushed=$(git -C "$dir" log "@{u}..HEAD" --oneline 2>/dev/null)
+  elif [[ -n "$branch" ]] && ! git -C "$dir" rev-parse --verify "origin/$branch" &>/dev/null; then
+    unpushed="branch not pushed to origin"
+  else
+    unpushed=$(git -C "$dir" log "origin/$branch..HEAD" --oneline 2>/dev/null)
+  fi
   [[ -z "$dirty" && -z "$unpushed" ]] && return 0
   echo "  ! $label:$([ -n "$dirty" ] && echo " uncommitted changes")$([ -n "$unpushed" ] && echo " unpushed commits")"
   return 1
@@ -52,7 +59,7 @@ guard_clean() {
   done
   [[ $dirty -eq 0 ]] && return 0
   if [[ -t 0 ]]; then
-    read -rp "Unclean repos above. Delete anyway? [y/N] " confirm
+    read -rp "Unclean repos above. Uncommitted changes will be permanently lost. Delete anyway? [y/N] " confirm
     [[ "$confirm" =~ ^[yY]$ ]] && return 0
     echo "aborted"; return 1
   else
