@@ -19,8 +19,9 @@ done
 [[ -L ~/.config/.scripts ]] && rm ~/.config/.scripts
 ln -s "${src_dir}"/scripts ~/.config/.scripts
 
-# TPM
+# TPM + plugins
 [[ -d ~/.tmux/plugins/tpm ]] || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+~/.tmux/plugins/tpm/bin/install_plugins
 
 # kde default apps thingy
 XDG_MENU_PREFIX=arch- kbuildsycoca6
