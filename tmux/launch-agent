@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# launch-agent [session]  — start or resume AI agent; agent type via $AMUX_AI_AGENT (default: claude)
+SESSION="${1:-}"
+AGENT="${AMUX_AI_AGENT:-claude}"
+
+case "$AGENT" in
+  claude)
+    claude --resume "$SESSION" 2>/dev/null || claude --name "$SESSION"
+    ;;
+  opencode)
+    if [[ -n "$SESSION" ]] && ! opencode --session "$SESSION" 2>/dev/null; then
+      PANE=$(tmux display-message -p '#{pane_id}')
+      { sleep 5 && tmux send-keys -t "$PANE" "/rename $SESSION" Enter
+        sleep 1 && tmux send-keys -t "$PANE" "/exit" Enter; } &
+      opencode
+      opencode --session "$SESSION"
+    else
+      opencode --continue 2>/dev/null || opencode
+    fi
+    ;;
+  *)
+    exec "$AGENT"
+    ;;
+esac

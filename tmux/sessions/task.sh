@@ -32,7 +32,7 @@ load() {
 
   tmux send-keys -t "$TASK:nvim" "nvim ." Enter
   tmux split-window -h -t "$TASK:nvim" -c "$DIR"
-  tmux send-keys -t "$TASK:nvim" "claude --resume 2>/dev/null || claude" Enter
+  tmux send-keys -t "$TASK:nvim" "launch-agent $TASK" Enter
 
   tmux new-window -t "$TASK" -n bash -c "$DIR"
 
