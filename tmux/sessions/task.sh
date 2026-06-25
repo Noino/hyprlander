@@ -44,9 +44,13 @@ load() {
 unload() {
   TASK="$1"
   local dir
-  dir=$(tmux showenv -t "$TASK" AMUX_DIR 2>/dev/null | cut -d= -f2)
+  dir=$(tmux showenv -t "$TASK" AMUX_DIR 2>/dev/null | cut -d= -f2-)
 
-  [[ -n "$dir" ]] && { guard_clean "$TASK" "$dir" || return 1; }
+  if [[ -n "$dir" ]]; then
+    guard_clean "$TASK" "$dir" || return 1
+  else
+    echo "  ! AMUX_DIR not recorded for '$TASK' — guard skipped, worktrees not cleaned" >&2
+  fi
 
   if [[ -n "$dir" ]] && is_linked_worktree "$dir"; then
     local main_repo

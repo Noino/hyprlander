@@ -13,11 +13,12 @@ repo_default() {
 
 # pick_base <repo> <task>  — fzf branch list with repo default pre-selected; falls back to default on cancel
 pick_base() {
-  local repo="$1" task="$2"
+  local repo="$1" task="$2" default
+  default=$(repo_default "$repo")
   git -C "$repo" branch -a 2>/dev/null \
     | perl -pe 's~[* ]*(remotes/origin/)?~~' | sort -u \
-    | fzf --prompt="base for $task: " --query="$(repo_default "$repo")" --height=15 \
-    || repo_default "$repo"
+    | fzf --prompt="base for $task: " --query="$default" --height=15 \
+    || echo "$default"
 }
 
 # is_linked_worktree <dir>  — returns 0 if dir is a linked worktree (not main or bare)
@@ -37,10 +38,16 @@ check_git_clean() {
   local dirty unpushed branch
   dirty=$(git -C "$dir" status --porcelain 2>/dev/null)
   branch=$(git -C "$dir" branch --show-current 2>/dev/null)
-  if git -C "$dir" rev-parse --abbrev-ref "@{u}" &>/dev/null; then
+  if [[ -z "$branch" ]]; then
+    # detached HEAD — flag any commits not reachable from any remote
+    local unreachable; unreachable=$(git -C "$dir" log --oneline --not --remotes 2>/dev/null)
+    [[ -n "$unreachable" ]] && unpushed="detached HEAD with unreachable commits"
+  elif git -C "$dir" rev-parse --abbrev-ref "@{u}" &>/dev/null; then
     unpushed=$(git -C "$dir" log "@{u}..HEAD" --oneline 2>/dev/null)
-  elif [[ -n "$branch" ]] && ! git -C "$dir" rev-parse --verify "origin/$branch" &>/dev/null; then
-    unpushed="branch not pushed to origin"
+  elif ! git -C "$dir" rev-parse --verify "origin/$branch" &>/dev/null; then
+    # branch not on remote — only flag if there are local-only commits
+    local local_only; local_only=$(git -C "$dir" log --oneline --not --remotes 2>/dev/null)
+    [[ -n "$local_only" ]] && unpushed="branch not pushed to origin"
   else
     unpushed=$(git -C "$dir" log "origin/$branch..HEAD" --oneline 2>/dev/null)
   fi
