@@ -1,8 +1,29 @@
 #!/usr/bin/env bash
 AMUX_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
+# shared styling for amux's fzf pickers (the session-create "modal"); per-call flags still win
+export FZF_DEFAULT_OPTS="--layout=reverse --info=inline --border=rounded --margin=1 --padding=1 --pointer=▶ --marker=✓ --color=bg+:#283457,hl:#7aa2f7,hl+:#7dcfff,info:#7aa2f7,border:#7aa2f7,prompt:#7dcfff,pointer:#bb9af7,marker:#9ece6a,header:#565f89,label:#7aa2f7"
+
 tmux_goto() {
   [[ -n "$TMUX" ]] && tmux switch-client -t "$1" || tmux attach -t "$1"
+}
+
+# switch_clients_away <session>  — move every client attached to <session> to another
+# session (explicit target; relative -n/-p is unreliable from inside a popup)
+switch_clients_away() {
+  local target="$1" other
+  other=$(tmux list-sessions -F '#S' 2>/dev/null | grep -vxF "$target" | head -1)
+  [[ -z "$other" ]] && return 0   # nothing else to switch to
+  tmux list-clients -t "$target" -F '#{client_name}' 2>/dev/null | while read -r c; do
+    [[ -n "$c" ]] && tmux switch-client -c "$c" -t "$other"
+  done
+}
+
+# kill_session_safely <session>  — swap attached clients away first, so killing the
+# currently-attached session doesn't drop the client (tmux exit), then kill.
+kill_session_safely() {
+  switch_clients_away "$1"
+  tmux kill-session -t "$1" 2>/dev/null
 }
 
 # repo_default <dir>  — returns default branch name for repo (via origin/HEAD, falls back to master)
@@ -17,7 +38,7 @@ pick_base() {
   default=$(repo_default "$repo")
   git -C "$repo" branch -a 2>/dev/null \
     | perl -pe 's~[* ]*(remotes/origin/)?~~' | sort -u \
-    | fzf --prompt="base for $task: " --query="$default" --height=15 \
+    | fzf --prompt="  " --border-label=" base branch for $task " --query="$default" --height=100% \
     || echo "$default"
 }
 

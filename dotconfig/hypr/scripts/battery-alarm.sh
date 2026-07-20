@@ -1,0 +1,1 @@
+../../../scripts/battery-alarm.sh

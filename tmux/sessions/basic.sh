@@ -16,7 +16,7 @@ load() {
 }
 
 unload() {
-  tmux kill-session -t "$1" 2>/dev/null
+  kill_session_safely "$1"
 }
 
 [[ "${BASH_SOURCE[0]}" == "$0" ]] && load "$@"

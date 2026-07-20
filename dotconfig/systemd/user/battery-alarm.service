@@ -1,0 +1,9 @@
+[Unit]
+Description=Loud critical battery alarm (sound + banner), started on-demand
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.config/hypr/scripts/battery-alarm.sh

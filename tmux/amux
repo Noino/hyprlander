@@ -39,7 +39,7 @@ case "$1" in
     shift
     TMPL="${1:-}"
     if [[ -z "$TMPL" ]]; then
-      TMPL=$(list_templates | fzf --prompt="template: " --height=10 --no-info)
+      TMPL=$(list_templates | fzf --prompt="  " --border-label=" new session · pick template " --height=100%)
       [[ -z "$TMPL" ]] && exit 0
     else
       shift
@@ -62,7 +62,7 @@ case "$1" in
       source "$script"
       unload "$TASK"
     else
-      tmux kill-session -t "$TASK" 2>/dev/null
+      kill_session_safely "$TASK"
     fi
     ;;
   *)

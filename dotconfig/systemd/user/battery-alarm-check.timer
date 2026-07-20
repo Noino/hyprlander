@@ -1,0 +1,10 @@
+[Unit]
+Description=Poll battery level for critical alarm
+
+[Timer]
+OnBootSec=20s
+OnUnitActiveSec=20s
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

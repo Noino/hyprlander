@@ -59,7 +59,7 @@ unload() {
     git -C "$main_repo" worktree prune 2>/dev/null
   fi
 
-  tmux kill-session -t "$TASK" 2>/dev/null
+  kill_session_safely "$TASK"
 }
 
 [[ "${BASH_SOURCE[0]}" == "$0" ]] && load "$@"

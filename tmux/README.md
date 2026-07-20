@@ -43,27 +43,19 @@ On `amux rm`: guard checks for uncommitted/unpushed changes. If dir is a linked 
 
 ## Layout: dev
 
-Worktrees across crp, majakka, netpay at `~/Linkity/code/<repo>/<name>/`.
+Multi-repo worktree layout: one window per repo, each opened at a worktree for the same task/branch name, checked out (or created) across all of them together. Repo list and paths are project-specific — see `sessions.local/dev.sh` for the concrete example (gitignored; add your own project's repos there).
 
-On `amux new dev DEV-123`:
-- Scans all repos for branch matching `*DEV-123*`
-- Found in remote → `git worktree add` on that branch; repos without the branch get base branch worktree instead
-- Not found anywhere → fzf pick base, creates new branch + worktree in all repos
+| Window       | Layout                                      |
+|--------------|---------------------------------------------|
+| <per repo>   | nvim . \| launch-agent (vsplit) — worktree  |
 
-| Window   | Layout                                      |
-|----------|---------------------------------------------|
-| crp      | nvim . \| launch-agent (vsplit) — worktree  |
-| majakka  | nvim . \| launch-agent (vsplit) — worktree  |
-| netpay   | nvim . \| launch-agent (vsplit) — worktree  |
+A `dev` template can optionally kick off project-specific dev infra (e.g. a docker stack) as part of `load()`/`unload()` — again, project-specific; not part of the generic amux core.
 
-`amux new dev master` additionally opens:
+On `amux rm`: guards uncommitted/unpushed in all worktrees. Use `--force` to skip guard.
 
-| Window   | Layout                                          |
-|----------|-------------------------------------------------|
-| services | docker compose up \| vite (npm i first) / logs  |
-| ctrl     | wait for mariadb → run doctrine migrations      |
+## Services
 
-On `amux rm`: guards uncommitted/unpushed in all worktrees. `master` also runs `docker compose down`. Use `--force` to skip guard.
+The generic `dev` template hook above can call out to whatever local dev-infra CLI your project uses (start on `load()`, stop on `unload()` if it was running). This repo doesn't ship one — it's project-specific glue that lives in that project's own repo/docs.
 
 ## AI agent (`launch-agent`)
 
@@ -84,7 +76,7 @@ Set `AMUX_AI_AGENT` to switch agents (default: `claude`).
 | `alt+d` | `amux rm` (smart teardown + refresh) |
 | `alt+x` | vanilla kill with confirm + refresh  |
 
-Deleting current session switches client to next session before killing.
+Opens with the currently-attached session pre-selected. Deleting a session that a client is attached to swaps that client to another session first (via `kill_session_safely` in `lib.sh`), so removing the current session never drops you out of tmux.
 
 ## Template protocol
 
