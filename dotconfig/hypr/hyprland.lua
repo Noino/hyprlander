@@ -680,13 +680,6 @@ hl.bind("SUPER + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 -- 08 — DMS-generated config + local overrides
 -- =============================================================================
 
--- DMS is Lua-only for Hyprland now (its outputsPath is hardcoded to
--- dms/outputs.lua), so its fragments are loaded with plain `require`. DMS greps
--- for these literal require lines — `dms config resolve-include hyprland
--- outputs.lua` must report "included":true, or the Displays settings page will
--- not consider the fragment wired up.
-require("dms.outputs")
-
 -- Optional DMS fragments: only present once you touch the matching settings
 -- page, so they are loaded defensively. Written as literal require calls so
 -- DMS's include check can still find them.
@@ -700,6 +693,7 @@ local function require_if_present(name)
     end
 end
 
+require_if_present("outputs")
 require_if_present("cursor")      -- require("dms.cursor")
 require_if_present("windowrules") -- require("dms.windowrules")
 
