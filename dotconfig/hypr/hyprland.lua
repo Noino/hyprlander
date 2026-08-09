@@ -676,8 +676,16 @@ hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true })
 hl.bind("SUPER + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind("SUPER + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 
+
 -- =============================================================================
--- 08 — DMS-generated config + local overrides
+-- 08 — global autostart
+-- =============================================================================
+
+hl.on("hyprland.start", function()
+end)
+
+-- =============================================================================
+-- 09 — DMS-generated config + local overrides
 -- =============================================================================
 
 -- Optional DMS fragments: only present once you touch the matching settings
