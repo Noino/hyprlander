@@ -58,7 +58,7 @@ yay -Sq --needed \
  qt6-5compat\
  qt6-declarative\
  qt6-svg\
- qt6ct-kde\
+ hyprqt6engine\
  dms-shell-bin\
  qt6-multimedia\
  ripgrep\
