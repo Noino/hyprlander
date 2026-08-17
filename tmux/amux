@@ -50,23 +50,47 @@ case "$1" in
     load "$@"
     ;;
   rm)
-    TASK=""
+    TASK=""; TEMPLATE_OVERRIDE=""
     export AMUX_FORCE=""
-    for arg in "${@:2}"; do
-      [[ "$arg" == "--force" ]] && AMUX_FORCE="--force" || TASK="$arg"
+    rm_args=("${@:2}"); i=0
+    while (( i < ${#rm_args[@]} )); do
+      case "${rm_args[i]}" in
+        --force)    AMUX_FORCE="--force" ;;
+        --template) (( i++ )); TEMPLATE_OVERRIDE="${rm_args[i]:-}" ;;
+        *)          TASK="${rm_args[i]}" ;;
+      esac
+      (( i++ ))
     done
-    [[ -z "$TASK" ]] && echo "usage: amux rm <name> [--force]" && exit 1
-    template=$(tmux showenv -t "$TASK" AMUX_TEMPLATE 2>/dev/null | cut -d= -f2)
+    [[ -z "$TASK" ]] && echo "usage: amux rm <name> [--force] [--template <tmpl>]" && exit 1
+
+    # resolve the template from most to least authoritative. The tmux lookup only works
+    # while the session is alive, which is exactly when teardown is least likely to be
+    # needed -- the on-disk state is what makes `amux rm` work after a manual kill.
+    template="$TEMPLATE_OVERRIDE"
+    [[ -z "$template" ]] && template=$(tmux showenv -t "$TASK" AMUX_TEMPLATE 2>/dev/null | cut -d= -f2)
+    [[ -z "$template" ]] && template=$(amux_state_get "$TASK" template 2>/dev/null)
+
     script=$(resolve_session "$template")
     if [[ -n "$script" ]]; then
       source "$script"
-      unload "$TASK"
+      if unload "$TASK"; then
+        amux_state_clear "$TASK"
+      else
+        exit 1   # guard refused; keep state so a --force retry still knows the template
+      fi
     else
+      # Never silently "succeed" by just killing the session -- that is precisely how
+      # worktrees got orphaned before.
+      echo "amux rm: no template recorded for '$TASK'" >&2
+      echo "  session is gone and nothing was saved, so worktrees are NOT cleaned up." >&2
+      echo "  retry with:   amux rm $TASK --template dev" >&2
+      echo "  or directly:  dev-services wt rm $TASK" >&2
       kill_session_safely "$TASK"
+      exit 1
     fi
     ;;
   *)
-    echo "usage: amux [at <name>] [new [<tmpl> [args...]]] [rm <name> [--force]]"
+    echo "usage: amux [at <name>] [new [<tmpl> [args...]]] [rm <name> [--force] [--template <tmpl>]]"
     exit 1
     ;;
 esac

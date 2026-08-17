@@ -13,7 +13,6 @@
 -- =============================================================================
 
 local MONITOR_SCALE    = 1
-local TOUCHPAD_ENABLED = true
 local HYPRCURSOR_THEME = "Bibata-Modern-Ice"
 local HYPRCURSOR_SIZE  = 24
 
@@ -98,25 +97,51 @@ hl.monitor({ output = "", mode = "highrr", position = "auto", scale = MONITOR_SC
 hl.monitor({ output = "", mode = "highres", position = "auto", scale = MONITOR_SCALE })
 
 -- =============================================================================
--- 04 — Laptop (touchpad)
+-- 04 — Laptop (touchpad toggle)
 -- =============================================================================
 
--- Same approach as the old `$Touchpad` backtick: ask hyprctl for the device
--- name. Skipped silently when it can't be resolved (e.g. during
--- --verify-config, where no compositor is running).
-local function touchpad_name()
-    local ok, handle = pcall(io.popen,
-        [[hyprctl devices -j 2>/dev/null | jq -r '.mice[]? | select(.name | contains("touchpad")).name' 2>/dev/null | head -1]])
-    if not ok or not handle then return nil end
-    local name = handle:read("*l")
-    handle:close()
-    if name and name ~= "" then return name end
-    return nil
+-- No `device {}` block is declared here: devices are enabled by default, so
+-- declaring one only to set enabled=true was a no-op. This section exists purely
+-- to provide the toggle.
+--
+-- Hyprland derives its device name from the libinput name by lowercasing it and
+-- replacing spaces with dashes:
+--   "SYNA8022:00 06CB:CE67 Touchpad" -> "syna8022:00-06cb:ce67-touchpad"
+local touchpads = {}
+do
+    local f = io.open("/proc/bus/input/devices", "r")
+    if f then
+        for line in f:lines() do
+            local raw = line:match('^N: Name="(.*)"$')
+            if raw and raw:lower():find("touchpad", 1, true) then
+                touchpads[#touchpads + 1] = (raw:lower():gsub(" ", "-"))
+            end
+        end
+        f:close()
+    end
 end
 
-local tp = touchpad_name()
-if tp then
-    hl.device({ name = tp, enabled = TOUCHPAD_ENABLED })
+-- Hyprland exposes no way to read a device's enabled state back (there is no
+-- `device[...]:enabled` config key and `hyprctl devices` lists the device
+-- either way), so the state is tracked here. It resets to enabled on config
+-- reload, which matches the compositor default.
+local touchpad_on = true
+
+local function toggle_touchpad()
+    if #touchpads == 0 then
+        return
+    end
+
+    touchpad_on = not touchpad_on
+    for _, name in ipairs(touchpads) do
+        hl.device({ name = name, enabled = touchpad_on })
+    end
+
+    hl.notification.create({
+        text    = "Touchpad " .. (touchpad_on and "enabled" or "disabled"),
+        timeout = 1500,
+        icon    = touchpad_on and 5 or 2, -- OK / HINT
+    })
 end
 
 -- =============================================================================
@@ -547,6 +572,17 @@ hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("dms ipc call mpris previous"))
 
 hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl set +5%"), { repeating = true, locked = true })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { repeating = true, locked = true })
+
+-- ---- Touchpad ---------------------------------------------------------------
+
+-- toggle_touchpad is defined in section 04. Only bound when a touchpad actually
+-- exists, so desktops keep SUPER + ALT + T free instead of carrying a dead key.
+-- The dedicated key exists on some laptops but not all ThinkPads, hence a chord
+-- as well.
+if #touchpads > 0 then
+    hl.bind("XF86TouchpadToggle", toggle_touchpad, { locked = true })
+    hl.bind("SUPER + ALT + T", toggle_touchpad)
+end
 
 -- ---- Lid --------------------------------------------------------------------
 

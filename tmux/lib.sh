@@ -4,6 +4,39 @@ AMUX_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 # shared styling for amux's fzf pickers (the session-create "modal"); per-call flags still win
 export FZF_DEFAULT_OPTS="--layout=reverse --info=inline --border=rounded --margin=1 --padding=1 --pointer=▶ --marker=✓ --color=bg+:#283457,hl:#7aa2f7,hl+:#7dcfff,info:#7aa2f7,border:#7aa2f7,prompt:#7dcfff,pointer:#bb9af7,marker:#9ece6a,header:#565f89,label:#7aa2f7"
 
+# ---- durable session state ---------------------------------------------------------
+# tmux set-environment vars die with the session (and tmux-resurrect never restored them
+# either -- see the AMUX_SERVICES note in dev.sh). Anything teardown needs must therefore
+# live on disk: without this, killing a session by hand left `amux rm` unable to resolve
+# its template, so teardown silently degraded to "kill session" and the worktrees were
+# orphaned with no supported way to clean them up.
+AMUX_STATE="${XDG_STATE_HOME:-$HOME/.local/state}/amux"
+
+# task names double as directory and tmux session names; slashes would nest the state dir
+_amux_state_key() { printf '%s' "${1//\//-}"; }
+
+amux_state_set() {  # <task> <key> <value>
+  local task key
+  task=$(_amux_state_key "$1"); key="$2"
+  [[ -z "$task" || -z "$key" ]] && return 1
+  mkdir -p "$AMUX_STATE/$task" || return 1
+  printf '%s\n' "$3" > "$AMUX_STATE/$task/$key"
+}
+
+amux_state_get() {  # <task> <key> -> value on stdout; nonzero if unset
+  local task key
+  task=$(_amux_state_key "$1"); key="$2"
+  [[ -z "$task" || -z "$key" ]] && return 1
+  [[ -f "$AMUX_STATE/$task/$key" ]] || return 1
+  cat "$AMUX_STATE/$task/$key"
+}
+
+amux_state_clear() {  # <task>
+  local task; task=$(_amux_state_key "$1")
+  [[ -n "$task" && -d "$AMUX_STATE/$task" ]] && rm -rf "${AMUX_STATE:?}/$task"
+  return 0
+}
+
 tmux_goto() {
   [[ -n "$TMUX" ]] && tmux switch-client -t "$1" || tmux attach -t "$1"
 }
@@ -52,6 +85,11 @@ is_linked_worktree() {
 }
 
 # check_git_clean <dir> <label>  — returns 1 and prints warning if dirty/unpushed
+# NB: the `--not --remotes` checks below MUST name HEAD explicitly. `git log --not
+# --remotes` with no positive ref does not fall back to HEAD (any rev argument
+# suppresses that default), so it always returned empty -- the "branch not pushed" and
+# "detached HEAD" guards silently never fired, and amux rm would delete worktrees
+# holding unpushed commits believing them clean.
 check_git_clean() {
   local dir="$1" label="$2"
   [[ -d "$dir" ]] || return 0
@@ -61,13 +99,13 @@ check_git_clean() {
   branch=$(git -C "$dir" branch --show-current 2>/dev/null)
   if [[ -z "$branch" ]]; then
     # detached HEAD — flag any commits not reachable from any remote
-    local unreachable; unreachable=$(git -C "$dir" log --oneline --not --remotes 2>/dev/null)
+    local unreachable; unreachable=$(git -C "$dir" log --oneline HEAD --not --remotes 2>/dev/null)
     [[ -n "$unreachable" ]] && unpushed="detached HEAD with unreachable commits"
   elif git -C "$dir" rev-parse --abbrev-ref "@{u}" &>/dev/null; then
     unpushed=$(git -C "$dir" log "@{u}..HEAD" --oneline 2>/dev/null)
   elif ! git -C "$dir" rev-parse --verify "origin/$branch" &>/dev/null; then
     # branch not on remote — only flag if there are local-only commits
-    local local_only; local_only=$(git -C "$dir" log --oneline --not --remotes 2>/dev/null)
+    local local_only; local_only=$(git -C "$dir" log --oneline HEAD --not --remotes 2>/dev/null)
     [[ -n "$local_only" ]] && unpushed="branch not pushed to origin"
   else
     unpushed=$(git -C "$dir" log "origin/$branch..HEAD" --oneline 2>/dev/null)

@@ -29,6 +29,9 @@ load() {
   tmux new-session -d -s "$TASK" -c "$DIR" -n nvim
   tmux set-environment -t "$TASK" AMUX_TEMPLATE "task"
   tmux set-environment -t "$TASK" AMUX_DIR "$DIR"
+  # mirrored on disk -- tmux env dies with the session, and unload below needs both
+  amux_state_set "$TASK" template "task"
+  amux_state_set "$TASK" dir "$DIR"
 
   tmux send-keys -t "$TASK:nvim" "nvim ." Enter
   tmux split-window -h -t "$TASK:nvim" -c "$DIR"
@@ -45,6 +48,8 @@ unload() {
   TASK="$1"
   local dir
   dir=$(tmux showenv -t "$TASK" AMUX_DIR 2>/dev/null | cut -d= -f2-)
+  # tmux lookup fails once the session is dead; fall back to the on-disk record
+  [[ -z "$dir" ]] && dir=$(amux_state_get "$TASK" dir 2>/dev/null)
 
   if [[ -n "$dir" ]]; then
     guard_clean "$TASK" "$dir" || return 1

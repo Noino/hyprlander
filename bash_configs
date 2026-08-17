@@ -6,6 +6,8 @@ alias ll='ls -l'
 alias vi='nvim'
 alias vim='nvim'
 
+command -v dev-services >/dev/null 2>&1 && alias ds='dev-services'
+
 export EDITOR=nvim
 
 # Command history longer and better formatting
