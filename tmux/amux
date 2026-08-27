@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# NOTE ON TMUX TARGETS: a bare session name is NOT a safe -t argument. tmux parses '.'
+# in a target as window.pane, so a session named "v5.24" (release branches need dots)
+# resolves to "can't find pane: 24" and the session becomes unreachable -- and, worse,
+# silently half-built, because `new-window -t <name>` fails while `-t <name>:<window>`
+# succeeds. A trailing colon pins the whole string to the session part, and is harmless
+# for ordinary names.
 
 AMUX_DIR="$(dirname "$(realpath "$0")")"
 GLOBAL_DIR="$AMUX_DIR/sessions"
@@ -32,7 +38,7 @@ case "$1" in
     ;;
   at)
     [[ -z "$2" ]] && echo "usage: amux at <name>" && exit 1
-    tmux has-session -t "$2" 2>/dev/null || { echo "no session: $2"; exit 1; }
+    tmux has-session -t "$2:" 2>/dev/null || { echo "no session: $2"; exit 1; }
     tmux_goto "$2"
     ;;
   new)
@@ -63,11 +69,19 @@ case "$1" in
     done
     [[ -z "$TASK" ]] && echo "usage: amux rm <name> [--force] [--template <tmpl>]" && exit 1
 
+    # audit trail: sessions have been disappearing with worktrees + state intact, which
+    # amux rm cannot cause. Logging every invocation makes the next occurrence decidable --
+    # no line here means something else killed it.
+    mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/amux"
+    printf '%s amux-rm session=%s force=%s parent=%s\n' "$(date -Is)" "$TASK" "${AMUX_FORCE:-no}" \
+      "$(ps -o comm= -p "$PPID" 2>/dev/null)" \
+      >> "${XDG_STATE_HOME:-$HOME/.local/state}/amux/session-events.log"
+
     # resolve the template from most to least authoritative. The tmux lookup only works
     # while the session is alive, which is exactly when teardown is least likely to be
     # needed -- the on-disk state is what makes `amux rm` work after a manual kill.
     template="$TEMPLATE_OVERRIDE"
-    [[ -z "$template" ]] && template=$(tmux showenv -t "$TASK" AMUX_TEMPLATE 2>/dev/null | cut -d= -f2)
+    [[ -z "$template" ]] && template=$(tmux showenv -t "$TASK:" AMUX_TEMPLATE 2>/dev/null | cut -d= -f2)
     [[ -z "$template" ]] && template=$(amux_state_get "$TASK" template 2>/dev/null)
 
     script=$(resolve_session "$template")
@@ -83,8 +97,13 @@ case "$1" in
       # worktrees got orphaned before.
       echo "amux rm: no template recorded for '$TASK'" >&2
       echo "  session is gone and nothing was saved, so worktrees are NOT cleaned up." >&2
-      echo "  retry with:   amux rm $TASK --template dev" >&2
-      echo "  or directly:  dev-services wt rm $TASK" >&2
+      echo "  retry with:   amux rm $TASK --template <name>" >&2
+      # amux core stays generic -- it ships to machines with no dev-services, so this
+      # hint only appears where that command actually exists. Anything that genuinely
+      # depends on dev-services belongs in a session template (sessions.local/dev.sh),
+      # not here.
+      command -v dev-services >/dev/null 2>&1 \
+        && echo "  or directly:  dev-services wt rm $TASK" >&2
       kill_session_safely "$TASK"
       exit 1
     fi

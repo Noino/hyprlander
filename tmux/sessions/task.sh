@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# NOTE ON TMUX TARGETS: a bare session name is NOT a safe -t argument. tmux parses '.'
+# in a target as window.pane, so a session named "v5.24" (release branches need dots)
+# resolves to "can't find pane: 24" and the session becomes unreachable -- and, worse,
+# silently half-built, because `new-window -t <name>` fails while `-t <name>:<window>`
+# succeeds. A trailing colon pins the whole string to the session part, and is harmless
+# for ordinary names.
 # amux task <name> — task session; worktree-aware if in bare repo or linked worktree
 source "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/../lib.sh"
 
@@ -24,11 +30,11 @@ load() {
     DIR="$worktree"
   fi
 
-  tmux has-session -t "$TASK" 2>/dev/null && tmux_goto "$TASK" && return
+  tmux has-session -t "$TASK:" 2>/dev/null && tmux_goto "$TASK" && return
 
   tmux new-session -d -s "$TASK" -c "$DIR" -n nvim
-  tmux set-environment -t "$TASK" AMUX_TEMPLATE "task"
-  tmux set-environment -t "$TASK" AMUX_DIR "$DIR"
+  tmux set-environment -t "$TASK:" AMUX_TEMPLATE "task"
+  tmux set-environment -t "$TASK:" AMUX_DIR "$DIR"
   # mirrored on disk -- tmux env dies with the session, and unload below needs both
   amux_state_set "$TASK" template "task"
   amux_state_set "$TASK" dir "$DIR"
@@ -37,7 +43,7 @@ load() {
   tmux split-window -h -t "$TASK:nvim" -c "$DIR"
   tmux send-keys -t "$TASK:nvim" "launch-agent $TASK" Enter
 
-  tmux new-window -t "$TASK" -n bash -c "$DIR"
+  tmux new-window -t "$TASK:" -n bash -c "$DIR"
 
   tmux select-window -t "$TASK:nvim"
   tmux select-pane -t "$TASK:nvim.1"
@@ -47,7 +53,7 @@ load() {
 unload() {
   TASK="$1"
   local dir
-  dir=$(tmux showenv -t "$TASK" AMUX_DIR 2>/dev/null | cut -d= -f2-)
+  dir=$(tmux showenv -t "$TASK:" AMUX_DIR 2>/dev/null | cut -d= -f2-)
   # tmux lookup fails once the session is dead; fall back to the on-disk record
   [[ -z "$dir" ]] && dir=$(amux_state_get "$TASK" dir 2>/dev/null)
 

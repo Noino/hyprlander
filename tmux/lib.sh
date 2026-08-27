@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# NOTE ON TMUX TARGETS: a bare session name is NOT a safe -t argument. tmux parses '.'
+# in a target as window.pane, so a session named "v5.24" (release branches need dots)
+# resolves to "can't find pane: 24" and the session becomes unreachable -- and, worse,
+# silently half-built, because `new-window -t <name>` fails while `-t <name>:<window>`
+# succeeds. A trailing colon pins the whole string to the session part, and is harmless
+# for ordinary names.
 AMUX_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
 # shared styling for amux's fzf pickers (the session-create "modal"); per-call flags still win
@@ -38,7 +44,7 @@ amux_state_clear() {  # <task>
 }
 
 tmux_goto() {
-  [[ -n "$TMUX" ]] && tmux switch-client -t "$1" || tmux attach -t "$1"
+  [[ -n "$TMUX" ]] && tmux switch-client -t "$1:" || tmux attach -t "$1:"
 }
 
 # switch_clients_away <session>  — move every client attached to <session> to another
@@ -47,7 +53,7 @@ switch_clients_away() {
   local target="$1" other
   other=$(tmux list-sessions -F '#S' 2>/dev/null | grep -vxF "$target" | head -1)
   [[ -z "$other" ]] && return 0   # nothing else to switch to
-  tmux list-clients -t "$target" -F '#{client_name}' 2>/dev/null | while read -r c; do
+  tmux list-clients -t "$target:" -F '#{client_name}' 2>/dev/null | while read -r c; do
     [[ -n "$c" ]] && tmux switch-client -c "$c" -t "$other"
   done
 }
@@ -56,7 +62,7 @@ switch_clients_away() {
 # currently-attached session doesn't drop the client (tmux exit), then kill.
 kill_session_safely() {
   switch_clients_away "$1"
-  tmux kill-session -t "$1" 2>/dev/null
+  tmux kill-session -t "$1:" 2>/dev/null
 }
 
 # repo_default <dir>  — returns default branch name for repo (via origin/HEAD, falls back to master)
@@ -85,6 +91,10 @@ is_linked_worktree() {
 }
 
 # check_git_clean <dir> <label>  — returns 1 and prints warning if dirty/unpushed
+# KEEP IN SYNC with docker-setup/dev-services.lib:ds_wt_dirty, which answers the same
+# question for `dev-services wt rm`. These two copies have already drifted into the
+# identical bug twice (the missing positive ref below, and treating a squash-merged
+# branch whose upstream was pruned as unpushed work).
 # NB: the `--not --remotes` checks below MUST name HEAD explicitly. `git log --not
 # --remotes` with no positive ref does not fall back to HEAD (any rev argument
 # suppresses that default), so it always returned empty -- the "branch not pushed" and
@@ -94,24 +104,44 @@ check_git_clean() {
   local dir="$1" label="$2"
   [[ -d "$dir" ]] || return 0
   git -C "$dir" rev-parse --git-dir &>/dev/null || return 0
-  local dirty unpushed branch
+  # initialised, not merely declared: bare `local x` leaves x UNSET, which aborts the
+  # function under `set -u` (as the drift guard in docker-setup/tests/run.sh runs it)
+  local dirty="" unpushed="" branch=""
   dirty=$(git -C "$dir" status --porcelain 2>/dev/null)
   branch=$(git -C "$dir" branch --show-current 2>/dev/null)
+  # $unpushed always holds a short REASON string, never a commit list, so the message
+  # below can print what was actually objected to.
+  #
+  # Branch order and reason wording are kept IDENTICAL to ds_wt_dirty in
+  # docker-setup/dev-services.lib so the two can be diffed and machine-compared. They stay
+  # separate implementations on purpose: amux runs on machines that have no dev-services.
   if [[ -z "$branch" ]]; then
-    # detached HEAD — flag any commits not reachable from any remote
-    local unreachable; unreachable=$(git -C "$dir" log --oneline HEAD --not --remotes 2>/dev/null)
-    [[ -n "$unreachable" ]] && unpushed="detached HEAD with unreachable commits"
+    [[ -n "$(git -C "$dir" log --oneline HEAD --not --remotes 2>/dev/null)" ]] \
+      && unpushed="detached HEAD with commits on no remote"
   elif git -C "$dir" rev-parse --abbrev-ref "@{u}" &>/dev/null; then
-    unpushed=$(git -C "$dir" log "@{u}..HEAD" --oneline 2>/dev/null)
-  elif ! git -C "$dir" rev-parse --verify "origin/$branch" &>/dev/null; then
-    # branch not on remote — only flag if there are local-only commits
-    local local_only; local_only=$(git -C "$dir" log --oneline HEAD --not --remotes 2>/dev/null)
-    [[ -n "$local_only" ]] && unpushed="branch not pushed to origin"
+    [[ -n "$(git -C "$dir" log "@{u}..HEAD" --oneline 2>/dev/null)" ]] && unpushed="unpushed commits"
+  elif git -C "$dir" rev-parse --verify "origin/$branch" &>/dev/null; then
+    # on the remote, just no upstream tracking configured (normal for bare-repo worktrees)
+    [[ -n "$(git -C "$dir" log "origin/$branch..HEAD" --oneline 2>/dev/null)" ]] && unpushed="unpushed commits"
+  elif [[ -n "$(git -C "$dir" config --get "branch.$branch.merge" 2>/dev/null)" ]]; then
+    # Upstream IS configured but its remote-tracking ref is gone: the branch was published
+    # and later deleted upstream -- ordinary post-merge PR cleanup. A squash-merge rewrites
+    # SHAs so the local commits really are on no remote, meaning raw reachability cannot
+    # tell merged from abandoned; look for the ticket id across the remotes instead.
+    local ticket; ticket=$(printf '%s' "$branch" | grep -oE '[A-Z]{2,}-[0-9]+' | head -1)
+    if [[ -z "$ticket" || -z "$(git -C "$dir" log --remotes --oneline --grep="$ticket" -1 2>/dev/null)" ]]; then
+      unpushed="upstream branch deleted and nothing mentioning its ticket is on any remote (abandoned PR?)"
+    fi
   else
-    unpushed=$(git -C "$dir" log "origin/$branch..HEAD" --oneline 2>/dev/null)
+    [[ -n "$(git -C "$dir" log --oneline HEAD --not --remotes 2>/dev/null)" ]] \
+      && unpushed="branch never pushed"
   fi
   [[ -z "$dirty" && -z "$unpushed" ]] && return 0
-  echo "  ! $label:$([ -n "$dirty" ] && echo " uncommitted changes")$([ -n "$unpushed" ] && echo " unpushed commits")"
+  # reason assembled exactly as ds_wt_dirty does, so the two are byte-comparable
+  local reason=""
+  [[ -n "$dirty" ]] && reason="uncommitted changes"
+  [[ -n "$unpushed" ]] && reason="${reason:+$reason + }$unpushed"
+  echo "  ! $label: $reason"
   return 1
 }
 
