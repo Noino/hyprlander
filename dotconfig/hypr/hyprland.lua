@@ -187,6 +187,10 @@ hl.window_rule({ match = { class = "^([Ss]lack)$" }, tag = "+im" })
 -- games
 hl.window_rule({ match = { class = "^(gamescope)$" }, tag = "+games" })
 hl.window_rule({ match = { class = "^(steam_app_\\d+)$" }, tag = "+games" })
+hl.window_rule({ match = { class = "^(pathofexile.exe)$" }, tag = "+games" })
+
+hl.window_rule({ match = { class = "^awakened-poe-trade$" }, tag = "+game_tool" });
+
 hl.window_rule({ match = { class = "^(.*path of building.*)$" }, tag = "+game_adj" })
 
 -- gamestore
@@ -357,6 +361,7 @@ hl.window_rule({ match = { title = "^(Picture-in-Picture)$" }, pin = true, keep_
 -- ---- Blur & fullscreen ------------------------------------------------------
 
 hl.window_rule({ match = { tag = "games*" }, no_blur = true, float = true, fullscreen = true })
+hl.window_rule({ match = { tag = "game_tool*" }, no_blur = true })
 
 -- ---- Layer rules ------------------------------------------------------------
 
