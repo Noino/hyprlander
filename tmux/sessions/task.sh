@@ -32,21 +32,20 @@ load() {
 
   tmux has-session -t "$TASK:" 2>/dev/null && tmux_goto "$TASK" && return
 
-  tmux new-session -d -s "$TASK" -c "$DIR" -n nvim
+  tmux new-session -d -s "$TASK" -c "$DIR" -n main
   tmux set-environment -t "$TASK:" AMUX_TEMPLATE "task"
   tmux set-environment -t "$TASK:" AMUX_DIR "$DIR"
   # mirrored on disk -- tmux env dies with the session, and unload below needs both
   amux_state_set "$TASK" template "task"
   amux_state_set "$TASK" dir "$DIR"
 
-  tmux send-keys -t "$TASK:nvim" "nvim ." Enter
-  tmux split-window -h -t "$TASK:nvim" -c "$DIR"
-  tmux send-keys -t "$TASK:nvim" "launch-agent $TASK" Enter
+  tmux split-window -h -t "$TASK:main" -c "$DIR"
+  tmux send-keys -t "$TASK:main" "launch-agent $TASK" Enter
 
   tmux new-window -t "$TASK:" -n bash -c "$DIR"
 
-  tmux select-window -t "$TASK:nvim"
-  tmux select-pane -t "$TASK:nvim.1"
+  tmux select-window -t "$TASK:main"
+  tmux select-pane -t "$TASK:main.1"
   tmux_goto "$TASK"
 }
 

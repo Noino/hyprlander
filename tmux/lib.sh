@@ -72,13 +72,24 @@ repo_default() {
 }
 
 # pick_base <repo> <task>  — fzf branch list with repo default pre-selected; falls back to default on cancel
+# The character class MUST include '+': `git branch` prefixes a branch checked out in
+# another worktree with "+ ", and leaving it in produced a bogus duplicate entry ("+ master"
+# alongside "master") that is not a valid ref.
 pick_base() {
   local repo="$1" task="$2" default
   default=$(repo_default "$repo")
   git -C "$repo" branch -a 2>/dev/null \
-    | perl -pe 's~[* ]*(remotes/origin/)?~~' | sort -u \
+    | perl -pe 's~[*+ ]*(remotes/origin/)?~~' | sort -u \
     | fzf --prompt="  " --border-label=" base branch for $task " --query="$default" --height=100% \
     || echo "$default"
+}
+
+# branch_checked_out_at <repo> <branch>  — prints the worktree path holding <branch>, if
+# any. git refuses to check the same branch out twice (needs -f), so a branch parked in
+# some other worktree is a hard blocker for creating a new one.
+branch_checked_out_at() {
+  git -C "$1" worktree list --porcelain 2>/dev/null \
+    | awk -v b="branch refs/heads/$2" '/^worktree /{p=$2} $0==b{print p; exit}'
 }
 
 # is_linked_worktree <dir>  — returns 0 if dir is a linked worktree (not main or bare)
