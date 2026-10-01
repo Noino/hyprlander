@@ -360,8 +360,9 @@ hl.window_rule({ match = { title = "^(Picture-in-Picture)$" }, pin = true, keep_
 
 -- ---- Blur & fullscreen ------------------------------------------------------
 
-hl.window_rule({ match = { tag = "games*" }, no_blur = true, float = true, fullscreen = true })
+hl.window_rule({ match = { tag = "games*" }, no_blur = true, float = true, fullscreen = true, immediate = true })
 hl.window_rule({ match = { tag = "game_tool*" }, no_blur = true })
+hl.window_rule({ match = { tag = "gamestore*" }, no_blur = true })
 
 -- ---- Layer rules ------------------------------------------------------------
 
@@ -384,6 +385,18 @@ hl.window_rule({
     border_size = 0,
     rounding    = 0,
 })
+
+
+-- ---- screen sharing -------------------------------------------------------------
+
+hl.window_rule({ match = { title = ".*is sharing (a window|your screen).*" }, float = true })
+hl.window_rule({ match = { title = ".*is sharing (a window|your screen).*" }, pin = true })
+hl.window_rule({ match = { title = ".*is sharing (a window|your screen).*" }, move = { "(monitor_w*.5-window_w*.5)", "(monitor_h-window_h-12)" } })
+
+-- ---- Xwayland -------------------------------------------------------------------
+
+hl.window_rule({ match = { title = ".*\\.exe" }, immediate = true })
+hl.window_rule({ match = { class = "^()$", title = "^()$" }, no_blur = true })
 
 -- =============================================================================
 -- 06 — Behaviour

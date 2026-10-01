@@ -3,9 +3,7 @@
   "clockFormat": "24h",
   "showSeconds": true,
   "windSpeedUnit": "ms",
-  "nightModeEnabled": false,
   "barElevationEnabled": false,
-  "batteryPillPercentSign": false,
   "controlCenterShowMicPercent": true,
   "showWorkspaceIndex": true,
   "showWorkspaceApps": true,
@@ -37,8 +35,6 @@
   "launcherLogoMode": "compositor",
   "fontFamily": "JetBrains Mono Light",
   "lockBeforeSuspend": true,
-  "gtkThemingEnabled": false,
-  "qtThemingEnabled": false,
   "matugenTemplateNeovim": true,
   "notificationOverlayEnabled": true,
   "lockScreenShowSystemIcons": false,
@@ -189,11 +185,36 @@
       "shadowCustomColor": "#000000"
     }
   ],
+  "desktopClockCustomColor": {
+    "r": 1,
+    "g": 1,
+    "b": 1,
+    "a": 1,
+    "hsvHue": -1,
+    "hsvSaturation": 0,
+    "hsvValue": 1,
+    "hslHue": -1,
+    "hslSaturation": 0,
+    "hslLightness": 1,
+    "valid": true
+  },
+  "systemMonitorCustomColor": {
+    "r": 1,
+    "g": 1,
+    "b": 1,
+    "a": 1,
+    "hsvHue": -1,
+    "hsvSaturation": 0,
+    "hsvValue": 1,
+    "hslHue": -1,
+    "hslSaturation": 0,
+    "hslLightness": 1,
+    "valid": true
+  },
   "builtInPluginSettings": {
     "dms_settings_search": {
       "trigger": "?"
     }
   },
-  "configVersion": 18,
-  "closeNiriOverviewOnWindowFocus": true
+  "configVersion": 18
 }
