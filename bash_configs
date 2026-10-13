@@ -53,11 +53,25 @@ fi
 
 BP_JOBS="\[\e[1;31m\]\j\[\e[m\]";
 BP_TIME="\[\e[35m\]\t\[\e[m\]"
+BP_DATE="\[\e[35m\]\D{%a %-d %b %Y}\[\e[m\]"
 BP_HOST="\[\e[32m\]\h\[\e[m\]"
 BP_PATH="\[\e[33;1m\]\w\[\e[m\]"
 
-export PROMPT_COMMAND="_update_git_ps1; history -a"
-export PS1="[${BP_TIME}][${BP_JOBS}] ${BP_USR}@${BP_HOST}:${BP_PATH}\${GIT_PS1}$ "
+PS1_NORMAL="[${BP_TIME}][${BP_JOBS}] ${BP_USR}@${BP_HOST}:${BP_PATH}\${GIT_PS1}$ "
+# presentation mode: date instead of job count, and no branch name on screen
+PS1_PRESENT="[${BP_DATE}][${BP_TIME}] ${BP_USR}@${BP_HOST}:${BP_PATH}$ "
+
+# re-read each prompt so toggling switches already-open shells without a restart
+_update_prompt_mode() {
+  if [[ -e "${XDG_STATE_HOME:-$HOME/.local/state}/presentation-mode" ]]; then
+    PS1="$PS1_PRESENT"
+  else
+    PS1="$PS1_NORMAL"
+  fi
+}
+
+export PROMPT_COMMAND="_update_git_ps1; _update_prompt_mode; history -a"
+export PS1="$PS1_NORMAL"
 
 # Extract any archive by just writing "extract"
 extract () {

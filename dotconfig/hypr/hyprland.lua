@@ -616,6 +616,10 @@ hl.bind("SUPER + B", hl.dsp.exec_cmd("zen-browser"))
 hl.bind("SUPER + L", hl.dsp.exec_cmd("dms ipc lock lock"))
 hl.bind("SUPER + P", hl.dsp.exec_cmd("dms ipc call powermenu toggle"))
 hl.bind("SUPER + F1", hl.dsp.exec_cmd(CONFIG_DIR .. "/scripts/keybind.sh"))
+
+-- presentation mode: neutral wallpaper + date/time prompt. Deliberately awkward chord;
+-- it is a once-a-month press and must never be hit by accident mid-call.
+hl.bind("CTRL + ALT + SUPER + P", hl.dsp.exec_cmd(CONFIG_DIR .. "/scripts/presentation-mode.sh toggle"))
 hl.bind("SUPER + E", hl.dsp.exec_cmd("dolphin"))
 hl.bind("SUPER + X", hl.dsp.exec_cmd("ghostty"))
 
