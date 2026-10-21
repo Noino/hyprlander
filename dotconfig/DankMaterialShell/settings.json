@@ -51,9 +51,7 @@
   "updaterUseCustomCommand": true,
   "updaterTerminalAdditionalParams": "-e",
   "screenPreferences": {
-    "wallpaper": [
-      "all"
-    ]
+    "wallpaper": ["all"]
   },
   "barConfigs": [
     {
@@ -61,9 +59,7 @@
       "name": "Main Bar",
       "enabled": true,
       "position": 0,
-      "screenPreferences": [
-        "all"
-      ],
+      "screenPreferences": ["all"],
       "showOnLastDisplay": true,
       "leftWidgets": [
         {
@@ -121,20 +117,25 @@
           "minimumWidth": true
         },
         {
-          "id": "cpuUsage",
-          "enabled": true
-        },
-        {
           "id": "memUsage",
           "enabled": true,
           "minimumWidth": false,
-          "showSwap": false
+          "showSwap": false,
+          "showInGb": false
+        },
+        {
+          "id": "diskUsage",
+          "enabled": true,
+          "mountPath": "/home",
+          "diskUsageMode": 0,
+          "showMountPath": true,
+          "minimumWidth": true
         },
         {
           "id": "gpuTemp",
           "enabled": true,
           "selectedGpuIndex": 0,
-          "pciId": "1002:73df"
+          "pciId": "8086:7d55"
         },
         {
           "id": "battery",
@@ -196,7 +197,8 @@
     "hslHue": -1,
     "hslSaturation": 0,
     "hslLightness": 1,
-    "valid": true
+    "valid": true,
+    "rgba": -1
   },
   "systemMonitorCustomColor": {
     "r": 1,
@@ -209,7 +211,8 @@
     "hslHue": -1,
     "hslSaturation": 0,
     "hslLightness": 1,
-    "valid": true
+    "valid": true,
+    "rgba": -1
   },
   "builtInPluginSettings": {
     "dms_settings_search": {
