@@ -43,6 +43,98 @@ amux_state_clear() {  # <task>
   return 0
 }
 
+amux_role_normalize() {  # <letter|name> -> full role name on stdout; 1 if invalid
+  local in; in=$(printf '%s' "$1" | tr 'A-Z' 'a-z')
+  case "$in" in
+    b|base)    echo base ;;
+    t|task)    echo task ;;
+    r|review)  echo review ;;
+    s|support) echo support ;;
+    p|private) echo private ;;
+    m|misc)    echo misc ;;
+    *) return 1 ;;
+  esac
+}
+
+amux_role_letter() {  # <full role> -> single uppercase letter
+  case "$1" in
+    base)    echo B ;;
+    task)    echo T ;;
+    review)  echo R ;;
+    support) echo S ;;
+    private) echo P ;;
+    misc)    echo M ;;
+    *) return 1 ;;
+  esac
+}
+
+amux_role_set() {  # <session> <role>
+  local session="$1" full
+  full=$(amux_role_normalize "$2") || return 1
+  amux_state_set "$session" role "$full" || return 1
+  if tmux has-session -t "$session:" 2>/dev/null; then
+    tmux set-option -t "$session:" @role "$(amux_role_letter "$full")"
+  fi
+  return 0
+}
+
+amux_role_get() {  # <session> -> full role name on stdout; empty + 1 when unset
+  amux_state_get "$1" role
+}
+
+amux_owner_file() {  # <worktree> -> <git-dir>/amux-owner; empty + 1 if not a git worktree
+  local gd
+  gd=$(git -C "$1" rev-parse --absolute-git-dir 2>/dev/null) || return 1
+  [[ -n "$gd" ]] || return 1
+  printf '%s\n' "$gd/amux-owner"
+}
+
+amux_owner_write() {  # <worktree> <session> <role>; nonzero on failure, never exits
+  local f tmp
+  f=$(amux_owner_file "$1") || return 1
+  tmp="$f.$$"
+  { printf 'owner=%s\nrole=%s\ncreated=%s\n' "$2" "$3" "$(date -Is)" > "$tmp"; } 2>/dev/null \
+    && mv -f "$tmp" "$f" 2>/dev/null \
+    || { rm -f "$tmp" 2>/dev/null; return 1; }
+}
+
+amux_owner_get() {  # <worktree> <key> -> value on stdout; empty + 1 when absent or malformed
+  local f line
+  f=$(amux_owner_file "$1") || return 1
+  [[ -f "$f" ]] || return 1
+  line=$(grep -m1 "^$2=" "$f" 2>/dev/null) || return 1
+  line="${line#*=}"
+  [[ -n "$line" ]] || return 1
+  printf '%s\n' "$line"
+}
+
+# unowned counts as held: without a record amux cannot rule out that it is this session's
+amux_worktree_held() {  # <session> <newline-separated paths> -> first path inside a linked worktree held by <session>
+  local p gd owner
+  while IFS= read -r p; do
+    [[ -n "$p" ]] || continue
+    gd=$(git -C "$p" rev-parse --absolute-git-dir 2>/dev/null) || continue
+    [[ "$gd" == */worktrees/* ]] || continue
+    owner=$(amux_owner_get "$p" owner 2>/dev/null)
+    if [[ -z "$owner" || "$owner" == "$1" ]]; then
+      printf '%s\n' "$p"
+      return 0
+    fi
+  done <<< "$2"
+  return 1
+}
+
+amux_claim() {  # <session> <role> [worktree...]
+  local session="$1" role="$2" wt rc=0
+  shift 2
+  amux_role_set "$session" "$role" || return 1
+  role=$(amux_role_normalize "$role")
+  for wt in "$@"; do
+    amux_owner_write "$wt" "$session" "$role" || rc=1
+  done
+  return $rc
+}
+
 tmux_goto() {
   [[ -n "$TMUX" ]] && tmux switch-client -t "$1:" || tmux attach -t "$1:"
 }
@@ -54,13 +146,14 @@ switch_clients_away() {
   other=$(tmux list-sessions -F '#S' 2>/dev/null | grep -vxF "$target" | head -1)
   [[ -z "$other" ]] && return 0   # nothing else to switch to
   tmux list-clients -t "$target:" -F '#{client_name}' 2>/dev/null | while read -r c; do
-    [[ -n "$c" ]] && tmux switch-client -c "$c" -t "$other"
+    [[ -n "$c" ]] && tmux switch-client -c "$c" -t "$other:"
   done
 }
 
-# kill_session_safely <session>  — swap attached clients away first, so killing the
-# currently-attached session doesn't drop the client (tmux exit), then kill.
+# kill_session_safely <session>  — swap attached clients away first so killing the attached
+# session doesn't drop out of tmux; an already-gone session counts as done
 kill_session_safely() {
+  tmux has-session -t "$1:" 2>/dev/null || return 0
   switch_clients_away "$1"
   tmux kill-session -t "$1:" 2>/dev/null
 }

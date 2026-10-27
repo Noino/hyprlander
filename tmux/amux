@@ -41,6 +41,25 @@ case "$1" in
     tmux has-session -t "$2:" 2>/dev/null || { echo "no session: $2"; exit 1; }
     tmux_goto "$2"
     ;;
+  role)
+    ROLES="base task review support private misc"
+    case $# in
+      1)
+        [[ -n "$TMUX" ]] || { echo "amux role: not inside tmux, name a session: amux role <session> [<role>]"; exit 1; }
+        amux_role_get "$(tmux display-message -p '#S')"
+        ;;
+      2)
+        [[ -n "$TMUX" ]] || { echo "amux role: not inside tmux, name a session: amux role <session> <role>"; exit 1; }
+        amux_role_normalize "$2" >/dev/null || { echo "invalid role: $2 (valid: $ROLES)"; exit 1; }
+        amux_role_set "$(tmux display-message -p '#S')" "$2"
+        ;;
+      3)
+        amux_role_normalize "$3" >/dev/null || { echo "invalid role: $3 (valid: $ROLES)"; exit 1; }
+        amux_role_set "$2" "$3"
+        ;;
+      *) echo "usage: amux role [<session>] [<role>]"; exit 1 ;;
+    esac
+    ;;
   new)
     shift
     TMPL="${1:-}"
@@ -52,6 +71,15 @@ case "$1" in
     fi
     script=$(resolve_session "$TMPL")
     [[ -z "$script" ]] && echo "no template: $TMPL" && exit 1
+    if [[ -z "${AMUX_ROLE:-}" ]] && ! { [[ -n "${1:-}" ]] && tmux has-session -t "$1:" 2>/dev/null; }; then
+      AMUX_ROLE=$(printf '%s\n' misc base task review support private \
+        | fzf --prompt="  " --border-label=" new session · pick role " --height=100%)
+      [[ -z "$AMUX_ROLE" ]] && exit 0
+    fi
+    if [[ -n "${AMUX_ROLE:-}" ]]; then
+      role_full=$(amux_role_normalize "$AMUX_ROLE") || { echo "invalid role: $AMUX_ROLE"; exit 1; }
+      export AMUX_ROLE="$role_full"
+    fi
     source "$script"
     load "$@"
     ;;
@@ -93,23 +121,34 @@ case "$1" in
         exit 1   # guard refused; keep state so a --force retry still knows the template
       fi
     else
-      # Never silently "succeed" by just killing the session -- that is precisely how
-      # worktrees got orphaned before.
-      echo "amux rm: no template recorded for '$TASK'" >&2
-      echo "  session is gone and nothing was saved, so worktrees are NOT cleaned up." >&2
+      # no template means amux did not build this session, so it may only tear down one
+      # that holds no worktree it could own
+      if tmux has-session -t "$TASK:" 2>/dev/null; then
+        held=$(amux_worktree_held "$TASK" "$(tmux list-panes -s -t "$TASK:" -F '#{pane_current_path}' 2>/dev/null)")
+        if [[ -z "$held" ]]; then
+          kill_session_safely "$TASK"
+          amux_state_clear "$TASK"
+          exit 0
+        fi
+        echo "amux rm: no template recorded for '$TASK', and a pane sits in a worktree it may own:" >&2
+        echo "  $held" >&2
+        echo "  left running so that worktree is not orphaned." >&2
+      else
+        echo "amux rm: no template recorded for '$TASK', and the session is already gone," >&2
+        echo "  so its worktrees were not cleaned up." >&2
+      fi
       echo "  retry with:   amux rm $TASK --template <name>" >&2
-      # amux core stays generic -- it ships to machines with no dev-services, so this
-      # hint only appears where that command actually exists. Anything that genuinely
-      # depends on dev-services belongs in a session template (sessions.local/dev.sh),
-      # not here.
+      # only hint at dev-services where it exists; amux ships to machines without it
       command -v dev-services >/dev/null 2>&1 \
         && echo "  or directly:  dev-services wt rm $TASK" >&2
-      kill_session_safely "$TASK"
       exit 1
     fi
     ;;
   *)
     echo "usage: amux [at <name>] [new [<tmpl> [args...]]] [rm <name> [--force] [--template <tmpl>]]"
+    echo "       amux role                    show the current session's role"
+    echo "       amux role <role>             set the current session's role (inside tmux only)"
+    echo "       amux role <session> <role>   set a named session's role"
     exit 1
     ;;
 esac

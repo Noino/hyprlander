@@ -15,10 +15,10 @@ load() {
     [[ -z "$TASK" ]] && return 0
   fi
 
-  local DIR; DIR="$(pwd)"
+  local DIR worktree=""; DIR="$(pwd)"
 
   if [[ "$(git -C "$DIR" rev-parse --is-bare-repository 2>/dev/null)" == "true" ]]; then
-    local worktree="$DIR/$TASK"
+    worktree="$DIR/$TASK"
     if [[ ! -d "$worktree" ]]; then
       echo "→ creating worktree: $TASK"
       if ! git -C "$DIR" worktree add "$TASK" "$TASK" 2>/dev/null; then
@@ -28,6 +28,8 @@ load() {
       fi
     fi
     DIR="$worktree"
+  else
+    DIR="$HOME"
   fi
 
   tmux has-session -t "$TASK:" 2>/dev/null && tmux_goto "$TASK" && return
@@ -38,6 +40,11 @@ load() {
   # mirrored on disk -- tmux env dies with the session, and unload below needs both
   amux_state_set "$TASK" template "task"
   amux_state_set "$TASK" dir "$DIR"
+  if [[ -n "$worktree" ]]; then
+    amux_claim "$TASK" "${AMUX_ROLE:-misc}" "$worktree"
+  else
+    amux_claim "$TASK" "${AMUX_ROLE:-misc}"
+  fi
 
   tmux split-window -h -t "$TASK:main" -c "$DIR"
   tmux send-keys -t "$TASK:main" "launch-agent $TASK" Enter
