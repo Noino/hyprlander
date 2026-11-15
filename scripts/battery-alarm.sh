@@ -5,6 +5,9 @@
 SOUND="/usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga"
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
+# shellcheck source=battery-status.sh
+source "$SCRIPT_DIR/battery-status.sh"
+
 sound_loop() {
     while :; do
         paplay "$SOUND" 2>/dev/null
@@ -14,7 +17,7 @@ sound_loop() {
 
 banner_loop() {
     while :; do
-        cap=$(cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -1)
+        cap=$(battery_total_capacity) || cap="?"
         hyprctl seterror "rgb(ff1744)" "CRITICAL BATTERY: ${cap}% — plug in now!"
         sleep 5
     done
@@ -28,8 +31,9 @@ trap 'hyprctl seterror disable' EXIT TERM INT
 sound_loop &
 banner_loop &
 
+cap=$(battery_total_capacity) || cap="?"
 action=$(notify-send -a "Battery Alarm" -u critical -A dismiss=Silence \
-    "Critical Battery" "Plug in the charger, or click Silence for 5 minutes.")
+    "Critical Battery (${cap}%)" "Plug in the charger, or click Silence for 5 minutes.")
 
 [[ "$action" == "dismiss" ]] && "$SCRIPT_DIR/battery-alarm-dismiss.sh"
 
