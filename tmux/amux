@@ -71,7 +71,8 @@ case "$1" in
     fi
     script=$(resolve_session "$TMPL")
     [[ -z "$script" ]] && echo "no template: $TMPL" && exit 1
-    if [[ -z "${AMUX_ROLE:-}" ]] && ! { [[ -n "${1:-}" ]] && tmux has-session -t "$1:" 2>/dev/null; }; then
+    # basic is the throwaway session bare amux boots with, so it takes misc without asking
+    if [[ -z "${AMUX_ROLE:-}" && "$TMPL" != basic ]] && ! { [[ -n "${1:-}" ]] && tmux has-session -t "$1:" 2>/dev/null; }; then
       AMUX_ROLE=$(printf '%s\n' misc base task review support private \
         | fzf --prompt="  " --border-label=" new session · pick role " --height=100%)
       [[ -z "$AMUX_ROLE" ]] && exit 0
