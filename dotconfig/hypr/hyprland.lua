@@ -301,6 +301,7 @@ hl.window_rule({ match = { tag = "wallpaper*" }, float = true })
 hl.window_rule({ match = { tag = "settings*" }, float = true })
 hl.window_rule({ match = { tag = "viewer*" }, float = true })
 hl.window_rule({ match = { class = "([Zz]oom|onedriver|onedriver-launcher)$" }, float = true })
+hl.window_rule({ match = { title = "([Tt]rine.*[Ll]auncher)" }, center = true, float = true })
 hl.window_rule({ match = { class = "(org.kde.kcalc)", title = "(Kcalc)" }, float = true })
 hl.window_rule({ match = { class = "^(mpv|com.github.rafostar.Clapper)$" }, float = true })
 hl.window_rule({ match = { class = "^([Qq]alculate-gtk)$" }, float = true })
@@ -440,8 +441,8 @@ hl.config({
     },
 
     dwindle = {
-        preserve_split       = true,
-        special_scale_factor = 0.8,
+        preserve_split = true,
+        -- special_scale_factor = 0.8,
     },
 
     master = {
