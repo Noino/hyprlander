@@ -25,8 +25,29 @@ banner_loop() {
 
 # same banner Hyprland uses for config errors — persistent, updates in place,
 # no restacking. Must clear it ourselves on exit, systemd killing this
-# process won't touch it.
-trap 'hyprctl seterror disable' EXIT TERM INT
+# process won't touch it. Stop the writer loops first: if the banner loop is
+# still alive it can re-create the bar right after we clear it.
+cleanup() {
+    trap - EXIT TERM INT
+
+    local pids
+    pids=$(jobs -p)
+    if [[ -n "$pids" ]]; then
+        kill $pids 2>/dev/null
+        wait $pids 2>/dev/null
+    fi
+
+    hyprctl seterror disable
+
+    # A banner write can still be in flight when its loop is killed. Give it a
+    # moment to finish, then clear again so it cannot leave the bar behind.
+    sleep 0.2
+    hyprctl seterror disable
+}
+
+trap cleanup EXIT
+trap 'exit 143' TERM
+trap 'exit 130' INT
 
 sound_loop &
 banner_loop &
