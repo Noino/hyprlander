@@ -16,6 +16,10 @@ for d in ${src_dir}/dotconfig/*; do
     [[ -d $d ]] && ln -s "$d/" || ln -s "$d"
 done
 
+# dms rewrites its settings all the time, so git tracks a default and each machine keeps its own copy
+dms_dir="${src_dir}/dotconfig/DankMaterialShell"
+[[ -f "$dms_dir/settings.json" ]] || cp "$dms_dir/settings.default.json" "$dms_dir/settings.json"
+
 [[ -L ~/.config/.scripts ]] && rm ~/.config/.scripts
 ln -s "${src_dir}"/scripts ~/.config/.scripts
 

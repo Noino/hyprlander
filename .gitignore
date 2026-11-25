@@ -7,3 +7,4 @@ dotconfig/hypr/conf.local.d/*
 dotconfig/xdg-desktop-portal-kderc
 tmux/sessions.local/*
 dotconfig/tmux/plugins/
+dotconfig/DankMaterialShell/settings.json
