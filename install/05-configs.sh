@@ -27,6 +27,13 @@ ln -s "${src_dir}"/scripts ~/.config/.scripts
 [[ -d ~/.tmux/plugins/tpm ]] || git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ~/.tmux/plugins/tpm/bin/install_plugins
 
+# resurrect is unmaintained upstream, so we carry fixes for dotted session names and empty saves
+resurrect_dir="${src_dir}/dotconfig/tmux/plugins/tmux-resurrect"
+resurrect_patch="${src_dir}/install/patches/tmux-resurrect.patch"
+git -C "$resurrect_dir" apply --reverse --check "$resurrect_patch" 2>/dev/null \
+    || git -C "$resurrect_dir" apply "$resurrect_patch" \
+    || echo "tmux-resurrect: $resurrect_patch no longer applies, check it by hand" >&2
+
 # kde default apps thingy
 XDG_MENU_PREFIX=arch- kbuildsycoca6
 

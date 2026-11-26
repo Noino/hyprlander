@@ -1,0 +1,36 @@
+diff --git a/scripts/restore.sh b/scripts/restore.sh
+index 1a5e3f9..3a9cc6e 100755
+--- a/scripts/restore.sh
++++ b/scripts/restore.sh
+@@ -87,13 +87,13 @@ has_restored_session_0() {
+ window_exists() {
+ 	local session_name="$1"
+ 	local window_number="$2"
+-	tmux list-windows -t "$session_name" -F "#{window_index}" 2>/dev/null |
++	tmux list-windows -t "${session_name}:" -F "#{window_index}" 2>/dev/null |
+ 		\grep -q "^$window_number$"
+ }
+ 
+ session_exists() {
+ 	local session_name="$1"
+-	tmux has-session -t "$session_name" 2>/dev/null
++	tmux has-session -t "${session_name}:" 2>/dev/null
+ }
+ 
+ first_window_num() {
+diff --git a/scripts/save.sh b/scripts/save.sh
+index 01edcde..500f98a 100755
+--- a/scripts/save.sh
++++ b/scripts/save.sh
+@@ -243,6 +243,11 @@ save_all() {
+ 	dump_panes   >> "$resurrect_file_path"
+ 	dump_windows >> "$resurrect_file_path"
+ 	dump_state   >> "$resurrect_file_path"
++	# a server that is going away dumps nothing, and promoting that to last loses the good save
++	if ! \grep -q "^pane${d}" "$resurrect_file_path"; then
++		rm -f "$resurrect_file_path"
++		return 1
++	fi
+ 	execute_hook "post-save-layout" "$resurrect_file_path"
+ 	if files_differ "$resurrect_file_path" "$last_resurrect_file"; then
+ 		ln -fs "$(basename "$resurrect_file_path")" "$last_resurrect_file"
